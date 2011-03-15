@@ -3,11 +3,15 @@
 
 using namespace std;
 
+string user;
+
 bool failed(string s) {
+    s += " (by " + user + ')';
     cout << "!!! Test failed !!!: " << s << endl;
     return false;
 }
 bool passed(string s) {
+    s += " (by " + user + ')';
     cout << "Test passed: " << s << endl;
     return true;
 }
