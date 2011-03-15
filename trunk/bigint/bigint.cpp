@@ -12,7 +12,7 @@ using namespace std;
 
 void BigInt::reduce() {
     // private function that cuts off 0's at the beginning of the number
-    if (num[num.size()-1] == '0') {
+    if (num[num.size()-1] == '0' && num.size() > 1) {
         vector <char> newNum;
         for (int x = 0; x < num.size()-1; ++x) {
             newNum.push_back(num[x]);
