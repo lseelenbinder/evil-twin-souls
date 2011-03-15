@@ -1,3 +1,6 @@
+// Implementation for the BigInt class
+// Does NOT support negative numbers.
+
 #include "bigint.h"
 #include <string>
 #include <cstring>
@@ -8,6 +11,7 @@
 using namespace std;
 
 void BigInt::reduce() {
+    // private function that cuts off 0's at the beginning of the number
     if (num[num.size()-1] == '0') {
         vector <char> newNum;
         for (int x = 0; x < num.size()-1; ++x) {
@@ -19,6 +23,7 @@ void BigInt::reduce() {
 }
 
 BigInt::BigInt(const int i) {
+    // int constructor
     stringstream ss;
     ss << i;
     string str = ss.str();
@@ -29,6 +34,7 @@ BigInt::BigInt(const int i) {
 }
 
 BigInt::BigInt(string str) {
+    // string constructor
     for (int x = str.length()-1; x >= 0; --x) {
        num.push_back(str[x]);
     }
@@ -36,11 +42,13 @@ BigInt::BigInt(string str) {
 }
 
 BigInt::BigInt(vector <char> n) {
-    // does not reduce!
+    // vector<char> constructor
+    // does not call reduce()
     num = n;
 }
 
 string BigInt::toString() {
+    // returns the BigInt as a string
     string str;
     for (int x = num.size()-1; x >= 0; --x) {
         str += num[x];
@@ -49,11 +57,13 @@ string BigInt::toString() {
 }
 
 BigInt& BigInt::operator=(const BigInt& i) {
+    // assigns a BigInt to another BigInt
     num = i.num;
     return *this;
 }
 
 const BigInt BigInt::operator+(const BigInt& i) {
+    // adds two BigInts
     vector <char> big = (i.num.size() > num.size()?i.num:num);
     vector <char> small = (big == i.num?num:i.num);
     vector <char> result;
@@ -70,6 +80,7 @@ const BigInt BigInt::operator+(const BigInt& i) {
 }
 
 const BigInt BigInt::operator*(const BigInt& i) {
+    // Multiplies two BigInts
     BigInt result(0);
     for (int x = 0; x < num.size(); ++x) {
         for (int y = 0; y < i.num.size(); ++y) {
