@@ -16,6 +16,7 @@ class BigInt {
         string toString();
     
         BigInt& operator=(const BigInt& i);
+        BigInt& operator=(const int i);
         
         const BigInt operator+(const BigInt& i);
         const BigInt operator*(const BigInt& i);
