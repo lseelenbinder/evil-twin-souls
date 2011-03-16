@@ -80,6 +80,10 @@ void ev_test() {
     BigInt ev53("2849385934024938");
     BigInt ev54 = ev52 * ev53;
     assert(ev54.toString() == "3588056705767585855928352108804", "Multiplication test with medium big numbers.");
+
+    BigInt ev60("100");
+    ev60 = 55;
+    assert(ev60.toString() == "55", "Int assignment test.");
 }
 
 void td_test() {

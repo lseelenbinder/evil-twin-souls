@@ -62,6 +62,20 @@ BigInt& BigInt::operator=(const BigInt& i) {
     return *this;
 }
 
+BigInt& BigInt::operator=(const int i) {
+    // assigns a BigInt to an int
+    vector<char> newNum;
+    stringstream ss;
+    ss << i;
+    string str = ss.str();
+    for (int x = str.length()-1; x >= 0; --x) {
+       newNum.push_back(str[x]);
+    }
+    num = newNum;
+    reduce();
+    return *this;
+}
+
 const BigInt BigInt::operator+(const BigInt& i) {
     // adds two BigInts
     vector <char> big = (i.num.size() > num.size()?i.num:num);
