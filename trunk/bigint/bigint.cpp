@@ -22,7 +22,7 @@ void BigInt::reduce() {
     }
 }
 
-BigInt::BigInt(const int i) {
+BigInt::BigInt(const long long int i) {
     // int constructor
     stringstream ss;
     ss << i;
@@ -35,7 +35,7 @@ BigInt::BigInt(const int i) {
 
 BigInt::BigInt(string str) {
     // string constructor
-    for (int x = str.length()-1; x >= 0; --x) {
+    for (long long int x = str.length()-1; x >= 0; --x) {
        num.push_back(str[x]);
     }
     reduce();
@@ -50,7 +50,7 @@ BigInt::BigInt(vector <char> n) {
 string BigInt::toString() {
     // returns the BigInt as a string
     string str;
-    for (int x = num.size()-1; x >= 0; --x) {
+    for (long long int x = num.size()-1; x >= 0; --x) {
         str += num[x];
     }
     return str;
@@ -62,13 +62,13 @@ BigInt& BigInt::operator=(const BigInt& i) {
     return *this;
 }
 
-BigInt& BigInt::operator=(const int i) {
+BigInt& BigInt::operator=(const long long int i) {
     // assigns a BigInt to an int
     vector<char> newNum;
     stringstream ss;
     ss << i;
     string str = ss.str();
-    for (int x = str.length()-1; x >= 0; --x) {
+    for (long long int x = str.length()-1; x >= 0; --x) {
        newNum.push_back(str[x]);
     }
     num = newNum;
@@ -82,7 +82,7 @@ const BigInt BigInt::operator+(const BigInt& i) {
     vector <char> small = (big == i.num?num:i.num);
     vector <char> result;
     int pushDigit = 0;
-    for (int c = 0; c < big.size() || pushDigit > 0; ++c) {
+    for (long long int c = 0; c < big.size() || pushDigit > 0; ++c) {
         int numBig = (c < big.size()?big[c] - '0':0);
         int numSmall = (c < small.size()?small[c] - '0':0);
         int newDigit = (numBig+numSmall+pushDigit)%10;
@@ -96,13 +96,13 @@ const BigInt BigInt::operator+(const BigInt& i) {
 const BigInt BigInt::operator*(const BigInt& i) {
     // Multiplies two BigInts
     BigInt result(0);
-    for (int x = 0; x < num.size(); ++x) {
-        for (int y = 0; y < i.num.size(); ++y) {
+    for (long long int x = 0; x < num.size(); ++x) {
+        for (long long int y = 0; y < i.num.size(); ++y) {
             int digit1 = num[x] - '0';
             int digit2 = i.num[y] - '0';
             stringstream digitResult;
             digitResult << digit1*digit2;
-            for (int power = 0; power < x + y; ++power) {
+            for (long long int power = 0; power < x + y; ++power) {
                 digitResult << '0';
             }
             BigInt singleResult(digitResult.str());

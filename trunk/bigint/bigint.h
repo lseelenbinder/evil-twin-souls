@@ -11,12 +11,12 @@ class BigInt {
         void reduce();
 
     public:
-        BigInt(const int i);
+        BigInt(const long long int i);
         BigInt(string i);
         string toString();
     
         BigInt& operator=(const BigInt& i);
-        BigInt& operator=(const int i);
+        BigInt& operator=(const long long int i);
         
         const BigInt operator+(const BigInt& i);
         const BigInt operator*(const BigInt& i);
