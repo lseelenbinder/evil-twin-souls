@@ -11,10 +11,8 @@ TEMPLATE = app
 
 
 SOURCES += main.cpp\
-        etsgame.cpp \
-    new_timer.cpp
+        etsgame.cpp
 
-HEADERS  += etsgame.h \
-    new_timer.h
+HEADERS  += etsgame.h
 
 FORMS    += etsgame.ui
