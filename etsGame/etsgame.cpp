@@ -12,3 +12,27 @@ etsGame::~etsGame()
 {
     delete ui;
 }
+void etsGame::onkeyPressEvent(QKeyEvent *event)
+{
+
+}
+void etsGame::changeLevels()
+{
+
+}
+void etsGame::changeResolution()
+{
+
+}
+void etsGame::save()
+{
+
+}
+void etsGame::load()
+{
+
+}
+void etsGame::tick() // contains most of the game logic and collision
+{
+
+}
