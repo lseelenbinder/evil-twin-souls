@@ -22,9 +22,16 @@ private:
     QLabel player;
     QPixmap playerSprite;
     void movePlayer(int);
+    int score;
+    int life;
 
 private slots:
     void onkeyPressEvent(QKeyEvent*);
+    void tick(); // This is called every "tick" of the game.
+    void changeLevels();
+    void changeResolution();
+    void save();
+    void load();
 
 };
 
