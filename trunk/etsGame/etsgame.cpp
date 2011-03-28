@@ -71,7 +71,6 @@ void etsGame::tick() // contains most of the game logic and collision
     ++ticks;
     if (ticks % (25-level) == 0) { // decrease life!
         --life;
-        ui->pushButton->setText(QString::number(life));
     }
     if (ticks % 5 == 0) {
         movePlayer(direction); // move player!

@@ -1,7 +1,7 @@
 /********************************************************************************
 ** Form generated from reading UI file 'etsgame.ui'
 **
-** Created: Sun 27. Mar 22:11:55 2011
+** Created: Mon Mar 28 16:41:09 2011
 **      by: Qt User Interface Compiler version 4.6.3
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!
@@ -18,7 +18,6 @@
 #include <QtGui/QMainWindow>
 #include <QtGui/QMenu>
 #include <QtGui/QMenuBar>
-#include <QtGui/QPushButton>
 #include <QtGui/QStatusBar>
 #include <QtGui/QToolBar>
 #include <QtGui/QWidget>
@@ -43,7 +42,6 @@ public:
     QAction *action1440_x_900;
     QAction *action1600_x_900;
     QWidget *centralWidget;
-    QPushButton *pushButton;
     QMenuBar *menuBar;
     QMenu *menuFile;
     QMenu *menuChange_Resolution;
@@ -86,9 +84,6 @@ public:
         action1600_x_900->setObjectName(QString::fromUtf8("action1600_x_900"));
         centralWidget = new QWidget(etsGame);
         centralWidget->setObjectName(QString::fromUtf8("centralWidget"));
-        pushButton = new QPushButton(centralWidget);
-        pushButton->setObjectName(QString::fromUtf8("pushButton"));
-        pushButton->setGeometry(QRect(310, 200, 75, 23));
         etsGame->setCentralWidget(centralWidget);
         menuBar = new QMenuBar(etsGame);
         menuBar->setObjectName(QString::fromUtf8("menuBar"));
@@ -148,7 +143,6 @@ public:
         action1360_x_768->setText(QApplication::translate("etsGame", "1360 x 768", 0, QApplication::UnicodeUTF8));
         action1440_x_900->setText(QApplication::translate("etsGame", "1440 x 900", 0, QApplication::UnicodeUTF8));
         action1600_x_900->setText(QApplication::translate("etsGame", "1600 x 900", 0, QApplication::UnicodeUTF8));
-        pushButton->setText(QApplication::translate("etsGame", "PushButton", 0, QApplication::UnicodeUTF8));
         menuFile->setTitle(QApplication::translate("etsGame", "File", 0, QApplication::UnicodeUTF8));
         menuChange_Resolution->setTitle(QApplication::translate("etsGame", "Change Resolution", 0, QApplication::UnicodeUTF8));
         menuGasme->setTitle(QApplication::translate("etsGame", "Game", 0, QApplication::UnicodeUTF8));
