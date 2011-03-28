@@ -6,34 +6,70 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>400</width>
-    <height>300</height>
+    <width>707</width>
+    <height>462</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Best Game ever!!</string>
   </property>
-  <widget class="QWidget" name="centralWidget"/>
+  <widget class="QWidget" name="centralWidget">
+   <widget class="QPushButton" name="pushButton">
+    <property name="geometry">
+     <rect>
+      <x>310</x>
+      <y>200</y>
+      <width>75</width>
+      <height>23</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>PushButton</string>
+    </property>
+   </widget>
+  </widget>
   <widget class="QMenuBar" name="menuBar">
    <property name="geometry">
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>400</width>
-     <height>22</height>
+     <width>707</width>
+     <height>21</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
     <property name="title">
      <string>File</string>
     </property>
+    <widget class="QMenu" name="menuChange_Resolution">
+     <property name="title">
+      <string>Change Resolution</string>
+     </property>
+     <addaction name="action800_x_600"/>
+     <addaction name="action1024_x_768"/>
+     <addaction name="action1152_x_824"/>
+     <addaction name="action1280_x_700"/>
+     <addaction name="action1280_x_720"/>
+     <addaction name="action1280_x_768"/>
+     <addaction name="action1280_x_800"/>
+     <addaction name="action1360_x_768"/>
+     <addaction name="action1440_x_900"/>
+     <addaction name="action1600_x_900"/>
+    </widget>
     <addaction name="actionChange_Level"/>
-    <addaction name="actionChange_Resolution"/>
+    <addaction name="menuChange_Resolution"/>
     <addaction name="separator"/>
     <addaction name="actionSave"/>
     <addaction name="actionLoad"/>
    </widget>
+   <widget class="QMenu" name="menuGasme">
+    <property name="title">
+     <string>Game</string>
+    </property>
+    <addaction name="actionNew_Game"/>
+   </widget>
    <addaction name="menuFile"/>
+   <addaction name="menuGasme"/>
   </widget>
   <widget class="QToolBar" name="mainToolBar">
    <attribute name="toolBarArea">
@@ -59,9 +95,59 @@
     <string>Load</string>
    </property>
   </action>
-  <action name="actionChange_Resolution">
+  <action name="actionNew_Game">
    <property name="text">
-    <string>Change Resolution</string>
+    <string>New Game</string>
+   </property>
+  </action>
+  <action name="action800_x_600">
+   <property name="text">
+    <string>800 x 600</string>
+   </property>
+  </action>
+  <action name="action1024_x_768">
+   <property name="text">
+    <string>1024 x 768</string>
+   </property>
+  </action>
+  <action name="action1152_x_824">
+   <property name="text">
+    <string>1152 x 864</string>
+   </property>
+  </action>
+  <action name="action1280_x_700">
+   <property name="text">
+    <string>1280 x 600</string>
+   </property>
+  </action>
+  <action name="action1280_x_720">
+   <property name="text">
+    <string>1280 x 720</string>
+   </property>
+  </action>
+  <action name="action1280_x_768">
+   <property name="text">
+    <string>1280 x 768</string>
+   </property>
+  </action>
+  <action name="action1280_x_800">
+   <property name="text">
+    <string>1280 x 800</string>
+   </property>
+  </action>
+  <action name="action1360_x_768">
+   <property name="text">
+    <string>1360 x 768</string>
+   </property>
+  </action>
+  <action name="action1440_x_900">
+   <property name="text">
+    <string>1440 x 900</string>
+   </property>
+  </action>
+  <action name="action1600_x_900">
+   <property name="text">
+    <string>1600 x 900</string>
    </property>
   </action>
  </widget>
