@@ -53,6 +53,7 @@
      <string>Game</string>
     </property>
     <addaction name="actionNew_Game"/>
+    <addaction name="actionPause"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuGasme"/>
@@ -134,6 +135,11 @@
   <action name="action1600_x_900">
    <property name="text">
     <string>1600 x 900</string>
+   </property>
+  </action>
+  <action name="actionPause">
+   <property name="text">
+    <string>Pause</string>
    </property>
   </action>
  </widget>
