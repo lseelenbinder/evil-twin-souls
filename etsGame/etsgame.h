@@ -24,8 +24,8 @@ private:
     QLabel *player;
     QPushButton *air;
     QLabel *scoreDisplay;
-    QLabel *timeDisplay;
-    QTime *time;
+    QLabel *pauseDisplay;
+    QTimer *gameTimer;
     void movePlayer(int);
     int score;
     int life;
@@ -33,8 +33,11 @@ private:
     int ticks;
     int direction;
     int myCount;
+    bool isActive; // is a game loaded at the moment?
+    bool isRunning; // is the game actually running?
 
 private slots:
+    void on_actionPause_triggered();
     void on_action1600_x_900_triggered();
     void on_action1440_x_900_triggered();
     void on_action1360_x_768_triggered();
@@ -50,9 +53,12 @@ private slots:
     void keyPressEvent(QKeyEvent*);
     void tick(); // This is called every "tick" of the game.
     void changeResolution(int, int);
+    void updateAir();
+
+    void clearAll();
+    void gameOver();
     void save();
     void load();
-    void updateAir();
 
 };
 
