@@ -220,7 +220,6 @@ void etsGame::on_actionNew_Game_triggered() // Starts a completely new game
 
     // (Re)set all the variables
     life = 1000;
-    level = 1;
     ticks = 0;
     direction = 0;
     myCount = 0;
