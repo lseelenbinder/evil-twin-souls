@@ -51,6 +51,7 @@ etsGame::etsGame(QWidget *parent) : // CONSTRUCTOR, QLabels, etc. are created (b
     scoreDisplay->setText("Score:\n00000");
     scoreDisplay->hide();
 
+    // IMPORTANT: sets also the objects positions!
     changeResolution(800,600);
 }
 
@@ -83,7 +84,7 @@ void etsGame::movePlayer(int y) {
     }
 }
 
-void etsGame::changeResolution(int w, int h) // changes window and background size
+void etsGame::changeResolution(int w, int h) // changes window and background size and adjusts objects' positions
 {
     this->setFixedSize(w,h);
     QPalette palette;
@@ -121,12 +122,15 @@ void etsGame::clearAll() { // clears all the objects
 
 void etsGame::save()
 {
-
+    
 }
 void etsGame::load()
 {
     clearAll();
-
+    
+    // Code Loading here...
+    
+    changeResolution(this->width(), this->height()); // sets the interface objects' positions
 }
 
 void etsGame::gameOver() {
