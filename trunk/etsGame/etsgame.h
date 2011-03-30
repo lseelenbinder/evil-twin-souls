@@ -32,6 +32,7 @@ private:
     int level;
     int ticks;
     int direction;
+    int changeDirection; // in which direction the direction is changing (up or down) when the key is keeped pressed.
     int myCount;
     bool isActive; // is a game loaded at the moment?
     bool isRunning; // is the game actually running?
@@ -51,6 +52,7 @@ private slots:
     void on_actionChange_Level_triggered();
     void on_actionNew_Game_triggered();
     void keyPressEvent(QKeyEvent*);
+    void keyReleaseEvent(QKeyEvent *);
     void tick(); // This is called every "tick" of the game.
     void changeResolution(int, int);
     void updateAir();

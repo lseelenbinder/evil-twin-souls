@@ -14,6 +14,7 @@ etsGame::etsGame(QWidget *parent) : // CONSTRUCTOR, QLabels, etc. are created (b
     QMainWindow(parent),
     ui(new Ui::etsGame),
     level(1),
+    changeDirection(0),
     isActive(false),
     isRunning(false)
 {
@@ -63,14 +64,26 @@ etsGame::~etsGame()
 void etsGame::keyPressEvent(QKeyEvent *event)
 {
     if (!event->isAutoRepeat()) {
-        if (event->key() == Qt::Key_Up && life > 0 && direction > -9) {
-            life = life - 5 + direction;
-            --direction;
-        } else if (event->key() == Qt::Key_Down && direction < 9) {
-            life = life - 5 - direction;
-            ++direction;
+        if (event->key() == Qt::Key_Up && life > 0) {
+            direction = -1;
+            changeDirection = -1;
+            life = life - 7;
+        } else if (event->key() == Qt::Key_Down) {
+            life = life - 7;
+            changeDirection = 1;
+            direction = 1;
         } else if (event->key() == Qt::Key_Shift) {
+            changeDirection = 0;
             direction = 0;
+        }
+    }
+}
+void etsGame::keyReleaseEvent(QKeyEvent *event) {
+    if (!event->isAutoRepeat()) {
+        if (event->key() == Qt::Key_Up) {
+            changeDirection = 1;
+        } else if (event->key() == Qt::Key_Down) {
+            changeDirection = -1;
         }
     }
 }
@@ -135,6 +148,7 @@ void etsGame::load()
 
 void etsGame::gameOver() {
     isRunning = false;
+    isActive = false;
     ticks = 0;
     pauseDisplay->setText("GAME OVER");
     pauseDisplay->show();
@@ -147,6 +161,25 @@ void etsGame::tick() // contains most of the game logic and collision
     if (isRunning) {
         if (ticks % (25-level) == 0) { // decrease life!
             --life;
+        }
+        if (ticks % 8 == 0) { // change PlayerMovement direction
+            if (direction > 0 && changeDirection < 0) {
+                direction += changeDirection;
+                if (direction <= 0) {
+                    direction = 0;
+                    changeDirection = 0;
+                }
+            } else if (direction < 0 && changeDirection > 0) {
+                direction += changeDirection;
+                if (direction >= 0) {
+                    direction = 0;
+                    changeDirection = 0;
+                }
+            } else {
+                direction += changeDirection;
+                if (direction < -12) direction = -12;
+                if (direction > 12) direction = 12;
+            }
         }
         if (ticks % 5 == 0) {
             movePlayer(direction); // move player!
