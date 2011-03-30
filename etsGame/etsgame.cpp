@@ -13,10 +13,12 @@ using namespace std;
 etsGame::etsGame(QWidget *parent) : // CONSTRUCTOR, QLabels, etc. are created (but kept hidden)
     QMainWindow(parent),
     ui(new Ui::etsGame),
+    life(1000),
     level(1),
     changeDirection(0),
     isActive(false),
-    isRunning(false)
+    isRunning(false),
+    isFullscreen(false)
 {
     ui->setupUi(this);
     setFocusPolicy(Qt::StrongFocus);
@@ -364,4 +366,19 @@ void etsGame::on_action1440_x_900_triggered()
 void etsGame::on_action1600_x_900_triggered()
 {
     changeResolution(1600,900);
+}
+void etsGame::on_actionFullscreen_triggered()
+{
+    if (isFullScreen())
+    {
+        ui->actionFullscreen->setText("Fullscreen");
+        showNormal();
+        changeResolution(lastResX, lastResY);
+    } else {
+        lastResX = this->width();
+        lastResY = this->height();
+        showFullScreen();
+        changeResolution(this->width(), this->height());
+        ui->actionFullscreen->setText("Windowed");
+    }
 }
