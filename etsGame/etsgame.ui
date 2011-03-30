@@ -55,6 +55,7 @@
     </property>
     <addaction name="actionNew_Game"/>
     <addaction name="actionPause"/>
+    <addaction name="actionCheat_Mode"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuGasme"/>
@@ -146,6 +147,14 @@
   <action name="actionFullscreen">
    <property name="text">
     <string>Fullscreen</string>
+   </property>
+  </action>
+  <action name="actionCheat_Mode">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Cheat Mode</string>
    </property>
   </action>
  </widget>

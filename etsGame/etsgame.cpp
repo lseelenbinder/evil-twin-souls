@@ -69,11 +69,17 @@ void etsGame::keyPressEvent(QKeyEvent *event)
         if (event->key() == Qt::Key_Up && life > 0) {
             direction = -1;
             changeDirection = -1;
-            life = life - 7;
+            if (cheatMode==false)
+            {
+               life = life - 7;
+            }
         } else if (event->key() == Qt::Key_Down) {
-            life = life - 7;
             changeDirection = 1;
             direction = 1;
+            if (cheatMode==false)
+            {
+               life = life - 7;
+            }
         } else if (event->key() == Qt::Key_Shift) {
             changeDirection = 0;
             direction = 0;
@@ -94,7 +100,7 @@ void etsGame::movePlayer(int y) {
     if (player->y() + y < 20) y = 20 - player->y();
     player->setGeometry(player->x(),player->y() + y,player->width(),player->height());
     player->show();
-    if (player->y() > this->height()-player->height()) {
+    if (player->y() > this->height()-player->height()&&cheatMode==false) {
         gameOver();
     }
 }
@@ -161,7 +167,7 @@ void etsGame::tick() // contains most of the game logic and collision
 {
     ++ticks;
     if (isRunning) {
-        if (ticks % (25-level) == 0) { // decrease life!
+        if (ticks % (25-level) == 0&&cheatMode==false) { // decrease life!
             --life;
         }
         if (ticks % 8 == 0) { // change PlayerMovement direction
@@ -194,7 +200,7 @@ void etsGame::tick() // contains most of the game logic and collision
                     && abs(l->y() - player->y()) <= l->height()/2 + player->height()/2) { // collision!
                     l->deleteLater();
                     obj->deleteLater();
-                    if (obj->getType() == FISH) { // collision with fish!
+                    if (obj->getType() == FISH&&cheatMode==false) { // collision with fish!
                         life = life - 150 - level*50;
                     } else if (obj->getType() == BUBBLE) { // collision with bubble!
                         life += 100;
@@ -381,4 +387,9 @@ void etsGame::on_actionFullscreen_triggered()
         changeResolution(this->width(), this->height());
         ui->actionFullscreen->setText("Windowed");
     }
+}
+
+void etsGame::on_actionCheat_Mode_toggled(bool onOff)
+{
+    cheatMode=onOff;
 }

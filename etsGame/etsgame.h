@@ -39,8 +39,12 @@ private:
     bool isFullscreen;
     int lastResX;
     int lastResY;
+    //
+    bool cheatMode;
+    //
 
 private slots:
+    void on_actionCheat_Mode_toggled(bool );
     void on_actionPause_triggered();
     void on_action1600_x_900_triggered();
     void on_action1440_x_900_triggered();
