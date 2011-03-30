@@ -41,6 +41,7 @@
      <addaction name="action1360_x_768"/>
      <addaction name="action1440_x_900"/>
      <addaction name="action1600_x_900"/>
+     <addaction name="actionFullscreen"/>
     </widget>
     <addaction name="actionChange_Level"/>
     <addaction name="menuChange_Resolution"/>
@@ -140,6 +141,11 @@
   <action name="actionPause">
    <property name="text">
     <string>Pause</string>
+   </property>
+  </action>
+  <action name="actionFullscreen">
+   <property name="text">
+    <string>Fullscreen</string>
    </property>
   </action>
  </widget>
