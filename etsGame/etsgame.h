@@ -6,6 +6,7 @@
 #include <QPixmap>
 #include <QTime>
 #include <QPushButton>
+#include <QSound>
 
 namespace Ui {
     class etsGame;
