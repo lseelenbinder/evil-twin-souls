@@ -16,6 +16,7 @@ etsGame::etsGame(QWidget *parent) : // CONSTRUCTOR, QLabels, etc. are created (b
     life(1000),
     level(1),
     changeDirection(0),
+    changeDirectionX(0),
     isActive(false),
     isRunning(false),
     isFullscreen(false)
@@ -33,7 +34,7 @@ etsGame::etsGame(QWidget *parent) : // CONSTRUCTOR, QLabels, etc. are created (b
     player->setObjectName("Player");
     QPixmap image("images\\sub.png");
     player->setPixmap(image);
-    player->setGeometry(QRect(0,this->height()/2-image.height()/2,image.width(),image.height()));
+    player->setGeometry(5,this->height()/2-image.height()/2,image.width(),image.height());
     player->hide();
 
     // Create a game QTimer
@@ -69,14 +70,15 @@ void etsGame::keyPressEvent(QKeyEvent *event)
         if (event->key() == Qt::Key_Up && life > 100) {
             direction = -1;
             changeDirection = -1;
-            if (!cheatMode) --life;
         } else if (event->key() == Qt::Key_Down) {
             changeDirection = 1;
             direction = 1;
-            if (!cheatMode) --life;
-        } else if (event->key() == Qt::Key_Shift) {
-            changeDirection = 0;
-            direction = 0;
+        } else if (event->key() == Qt::Key_Right) {
+            directionX = 1;
+            changeDirectionX = 1;
+        } else if (event->key() == Qt::Key_Left) {
+            directionX = -1;
+            changeDirectionX = -1;
         }
     }
 }
@@ -86,15 +88,22 @@ void etsGame::keyReleaseEvent(QKeyEvent *event) {
             changeDirection = 1;
         } else if (event->key() == Qt::Key_Down) {
             changeDirection = -1;
+        } else if (event->key() == Qt::Key_Right) {
+            changeDirectionX = -1;
+        } else if (event->key() == Qt::Key_Left) {
+            changeDirectionX = 1;
         }
     }
 }
 
-void etsGame::movePlayer(int y) {
+void etsGame::movePlayer(int y, int x) {
     if (player->y() + y < 20) y = 20 - player->y();
-    player->setGeometry(player->x(),player->y() + y,player->width(),player->height());
+    if (player->y() > this->height()) y = this->height() - player->y();
+    if (player->x() + x < 5) x = 5 - player->x();
+    if (player->x() + x > this->width()) x = this->width() - player->x();
+    player->setGeometry(player->x() + x,player->y() + y,player->width(),player->height());
     player->show();
-    if (player->y() > this->height()-player->height()&&cheatMode==false) {
+    if (player->y() > this->height() - player->height() && !cheatMode) {
         gameOver();
     }
 }
@@ -113,7 +122,7 @@ void etsGame::changeResolution(int w, int h) // changes window and background si
     scoreDisplay->setGeometry(this->width()-50,280,40,30);
     air->setGeometry(this->width()-50,50,30,200);
 
-    player->setGeometry(QRect(0,this->height()/2-player->height()/2,player->width(),player->height())); // careful!!! what if out of bounds?
+    player->setGeometry(5,this->height()/2-player->height()/2,player->width(),player->height()); // careful!!! what if out of bounds?
 }
 
 void etsGame::clearAll() { // clears all the objects
@@ -157,6 +166,27 @@ void etsGame::gameOver() {
     // ...
 }
 
+void etsGame::changePlayerMovement(int &dir, int &changeDir) {
+    if (dir > 0 && changeDir < 0) {
+        dir += changeDir;
+        if (dir <= 0) {
+            dir = 0;
+            changeDir = 0;
+        }
+    } else if (dir < 0 && changeDir > 0) {
+        dir += changeDir;
+        if (dir >= 0) {
+            dir = 0;
+            changeDir = 0;
+        }
+    } else {
+        dir += changeDir;
+        if (dir < -12) dir = -12;
+        else if (dir > 12) dir = 12;
+        else if (!cheatMode && changeDir != 0) --life;
+    }
+}
+
 void etsGame::tick() // contains most of the game logic and collision
 {
     ++ticks;
@@ -165,27 +195,11 @@ void etsGame::tick() // contains most of the game logic and collision
             --life;
         }
         if (ticks % 8 == 0) { // change PlayerMovement direction
-            if (direction > 0 && changeDirection < 0) {
-                direction += changeDirection;
-                if (direction <= 0) {
-                    direction = 0;
-                    changeDirection = 0;
-                }
-            } else if (direction < 0 && changeDirection > 0) {
-                direction += changeDirection;
-                if (direction >= 0) {
-                    direction = 0;
-                    changeDirection = 0;
-                }
-            } else {
-                direction += changeDirection;
-                if (direction < -12) direction = -12;
-                else if (direction > 12) direction = 12;
-                else if (!cheatMode && changeDirection != 0) --life;
-            }
+            changePlayerMovement(direction, changeDirection);
+            changePlayerMovement(directionX, changeDirectionX);
         }
         if (ticks % 5 == 0) {
-            movePlayer(direction); // move player!
+            movePlayer(direction, directionX); // move player!
             QList<gameObject*> objs = this->findChildren<gameObject*>();
             for (int i = 0; i < objs.length(); ++i) {
                 gameObject *obj = dynamic_cast<gameObject*>(objs[i]);
@@ -197,7 +211,7 @@ void etsGame::tick() // contains most of the game logic and collision
                      (player->y() <= l->y() && abs(l->y()-player->y()) <= player->height()-3))) { // collision!
                     l->deleteLater();
                     obj->deleteLater();
-                    if (obj->getType() == FISH&&cheatMode==false) { // collision with fish!
+                    if (obj->getType() == FISH && !cheatMode) { // collision with fish!
                         life = life - 150 - level*50;
                         QSound::play("audio/chomp.wav");
                     } else if (obj->getType() == BUBBLE) { // collision with bubble!
@@ -265,13 +279,15 @@ void etsGame::on_actionNew_Game_triggered() // Starts a completely new game
     // (Re)set all the variables
     life = 1000;
     ticks = 0;
-    direction = 0;
     myCount = 0;
     score = 0;
+    direction = 0;
+    directionX = 0;
     changeDirection = 0;
+    changeDirectionX = 0;
 
     // shows all the game interface objects
-    player->setGeometry(QRect(0,this->height()/2-player->height()/2,player->width(),player->height()));
+    player->setGeometry(5,this->height()/2-player->height()/2,player->width(),player->height());
     player->show();
 
     air->show();
