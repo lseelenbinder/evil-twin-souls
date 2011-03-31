@@ -31,7 +31,7 @@ etsGame::etsGame(QWidget *parent) : // CONSTRUCTOR, QLabels, etc. are created (b
     // Create Player!
     player = new QLabel(this);
     player->setObjectName("Player");
-    QPixmap image("images\\player.jpg");
+    QPixmap image("images\\sub.png");
     player->setPixmap(image);
     player->setGeometry(QRect(0,this->height()/2-image.height()/2,image.width(),image.height()));
     player->hide();
@@ -160,6 +160,7 @@ void etsGame::gameOver() {
     ticks = 0;
     pauseDisplay->setText("GAME OVER");
     pauseDisplay->show();
+    QSound::play("audio/sadTrombone.wav");
     // ...
 }
 
@@ -202,9 +203,11 @@ void etsGame::tick() // contains most of the game logic and collision
                     obj->deleteLater();
                     if (obj->getType() == FISH&&cheatMode==false) { // collision with fish!
                         life = life - 150 - level*50;
+                        QSound::play("audio/chomp.wav");
                     } else if (obj->getType() == BUBBLE) { // collision with bubble!
                         life += 100;
                         score += 15;
+                        QSound::play("audio/pop.wav");
                     }
                 }
                 if (l->x() < -l->width()) { // fish/bubble out of view
@@ -220,7 +223,7 @@ void etsGame::tick() // contains most of the game logic and collision
             gameObject *fish = new gameObject(this, myCount++);
             fish->setType(FISH);
             fish->setDirection(rand() % 4 - 4 - level);
-            QPixmap image("images\\fish.jpg");
+            QPixmap image("images\\shark.png");
             fish->setSprite(image);
             int objX = this->width();
             int objY = rand() % (this->height()-15) + 15;
@@ -231,7 +234,7 @@ void etsGame::tick() // contains most of the game logic and collision
             gameObject *bubble = new gameObject(this, myCount++);
             bubble->setType(BUBBLE);
             bubble->setDirection(rand() % 4 - 4 - level);
-            QPixmap image("images\\bubble.jpg");
+            QPixmap image("images\\bubble.png");
             bubble->setSprite(image);
             int objX = this->width();
             int objY = rand() % (this->height()-15) + 15;
@@ -269,6 +272,7 @@ void etsGame::on_actionNew_Game_triggered() // Starts a completely new game
     direction = 0;
     myCount = 0;
     score = 0;
+    changeDirection = 0;
 
     // shows all the game interface objects
     player->setGeometry(QRect(0,this->height()/2-player->height()/2,player->width(),player->height()));
