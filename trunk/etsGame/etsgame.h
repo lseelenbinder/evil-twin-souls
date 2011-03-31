@@ -27,13 +27,15 @@ private:
     QLabel *scoreDisplay;
     QLabel *pauseDisplay;
     QTimer *gameTimer;
-    void movePlayer(int);
+    void movePlayer(int, int);
+    void changePlayerMovement(int&, int&);
     int score;
     int life;
     int level;
     int ticks;
     int direction;
     int changeDirection; // in which direction the direction is changing (up or down) when the key is keeped pressed.
+    int directionX, changeDirectionX;
     int myCount;
     bool isActive; // is a game loaded at the moment?
     bool isRunning; // is the game actually running?
