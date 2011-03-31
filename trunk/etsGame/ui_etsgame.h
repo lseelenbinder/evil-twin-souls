@@ -1,7 +1,7 @@
 /********************************************************************************
 ** Form generated from reading UI file 'etsgame.ui'
 **
-** Created: Wed Mar 30 15:05:45 2011
+** Created: Thu 31. Mar 06:22:11 2011
 **      by: Qt User Interface Compiler version 4.6.3
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!
@@ -87,8 +87,10 @@ public:
         action1600_x_900->setObjectName(QString::fromUtf8("action1600_x_900"));
         actionPause = new QAction(etsGame);
         actionPause->setObjectName(QString::fromUtf8("actionPause"));
+        actionPause->setCheckable(true);
         actionFullscreen = new QAction(etsGame);
         actionFullscreen->setObjectName(QString::fromUtf8("actionFullscreen"));
+        actionFullscreen->setCheckable(true);
         actionCheat_Mode = new QAction(etsGame);
         actionCheat_Mode->setObjectName(QString::fromUtf8("actionCheat_Mode"));
         actionCheat_Mode->setCheckable(true);

@@ -1,7 +1,7 @@
 /****************************************************************************
 ** Meta object code from reading C++ file 'etsgame.h'
 **
-** Created: Wed Mar 30 23:22:24 2011
+** Created: Thu 31. Mar 05:39:37 2011
 **      by: The Qt Meta Object Compiler version 62 (Qt 4.6.3)
 **
 ** WARNING! All changes made in this file will be lost!
