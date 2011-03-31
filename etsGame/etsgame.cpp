@@ -66,20 +66,14 @@ etsGame::~etsGame()
 void etsGame::keyPressEvent(QKeyEvent *event)
 {
     if (!event->isAutoRepeat()) {
-        if (event->key() == Qt::Key_Up && life > 0) {
+        if (event->key() == Qt::Key_Up && life > 100) {
             direction = -1;
             changeDirection = -1;
-            if (cheatMode==false)
-            {
-               life = life - 7;
-            }
+            if (!cheatMode) --life;
         } else if (event->key() == Qt::Key_Down) {
             changeDirection = 1;
             direction = 1;
-            if (cheatMode==false)
-            {
-               life = life - 7;
-            }
+            if (!cheatMode) --life;
         } else if (event->key() == Qt::Key_Shift) {
             changeDirection = 0;
             direction = 0;
@@ -88,7 +82,7 @@ void etsGame::keyPressEvent(QKeyEvent *event)
 }
 void etsGame::keyReleaseEvent(QKeyEvent *event) {
     if (!event->isAutoRepeat()) {
-        if (event->key() == Qt::Key_Up) {
+        if (event->key() == Qt::Key_Up && life > 100) {
             changeDirection = 1;
         } else if (event->key() == Qt::Key_Down) {
             changeDirection = -1;
@@ -136,7 +130,6 @@ void etsGame::clearAll() { // clears all the objects
         gameTimer->stop();
     }
     pauseDisplay->hide();
-    ui->actionPause->setText("Pause");
     isActive = false;
     isRunning = false;
 }
@@ -168,7 +161,7 @@ void etsGame::tick() // contains most of the game logic and collision
 {
     ++ticks;
     if (isRunning) {
-        if (ticks % (25-level) == 0&&cheatMode==false) { // decrease life!
+        if (ticks % (25-level*2) == 0 && !cheatMode) { // decrease life!
             --life;
         }
         if (ticks % 8 == 0) { // change PlayerMovement direction
@@ -187,7 +180,8 @@ void etsGame::tick() // contains most of the game logic and collision
             } else {
                 direction += changeDirection;
                 if (direction < -12) direction = -12;
-                if (direction > 12) direction = 12;
+                else if (direction > 12) direction = 12;
+                else if (!cheatMode && changeDirection != 0) --life;
             }
         }
         if (ticks % 5 == 0) {
@@ -197,8 +191,10 @@ void etsGame::tick() // contains most of the game logic and collision
                 gameObject *obj = dynamic_cast<gameObject*>(objs[i]);
                 QLabel *l = obj->label;
                 l->setGeometry(l->x() + obj->getDirection(), l->y(), l->width(), l->height()); // move objects!
-                if (abs(l->x() - player->x()) <= l->width()/2 + player->width()/2
-                    && abs(l->y() - player->y()) <= l->height()/2 + player->height()/2) { // collision!
+                if (((player->x() >= l->x() && abs(l->x()-player->x()) <= l->width()-3) ||
+                     (player->x() <= l->x() && abs(l->x()-player->x()) <= player->width()-3)) &&
+                    ((player->y() >= l->y() && abs(l->y()-player->y()) <= l->height()-3) ||
+                     (player->y() <= l->y() && abs(l->y()-player->y()) <= player->height()-3))) { // collision!
                     l->deleteLater();
                     obj->deleteLater();
                     if (obj->getType() == FISH&&cheatMode==false) { // collision with fish!
@@ -315,14 +311,12 @@ void etsGame::on_actionChange_Level_triggered()
 void etsGame::on_actionPause_triggered()
 {
     if (isActive) {
-        if (ui->actionPause->text() == "Pause") {
+        if (ui->actionPause->isChecked()) {
             ticks = 0;
             isRunning = false;
-            ui->actionPause->setText("Restart");
             pauseDisplay->show();
         } else {
             isRunning = true;
-            ui->actionPause->setText("Pause");
             pauseDisplay->hide();
         }
     }
@@ -379,9 +373,8 @@ void etsGame::on_action1600_x_900_triggered()
 }
 void etsGame::on_actionFullscreen_triggered()
 {
-    if (isFullScreen())
+    if (!ui->actionFullscreen->isChecked())
     {
-        ui->actionFullscreen->setText("Fullscreen");
         showNormal();
         changeResolution(lastResX, lastResY);
     } else {
@@ -389,11 +382,11 @@ void etsGame::on_actionFullscreen_triggered()
         lastResY = this->height();
         showFullScreen();
         changeResolution(this->width(), this->height());
-        ui->actionFullscreen->setText("Windowed");
     }
 }
 
 void etsGame::on_actionCheat_Mode_toggled(bool onOff)
 {
     cheatMode=onOff;
+    if (cheatMode) life = 1000;
 }
