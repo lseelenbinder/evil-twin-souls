@@ -237,13 +237,11 @@ void etsGame::on_actionLoad_triggered()
     ui->actionPause->setChecked(true);
     on_actionPause_triggered();
 
-    int changeDir, dirX, changeDirX;
     bool full, cheat;
-    QPoint playerPos;
 
     in >> score >> life >> level;
     in >> ticks;
-    in >> direction >> changeDir >> dirX >> changeDirX;
+    in >> direction >> changeDirection >> directionX >> changeDirectionX;
     in >> full;
     in >> cheat;
     int x, y;
@@ -253,13 +251,13 @@ void etsGame::on_actionLoad_triggered()
     in >> len;
     for (int k = 0; k < len; k++)
     {
-        int t, direction;
+        int t, dir;
         gameObjectType type;
-        in >> t >> direction;
+        in >> t >> dir;
         type = (gameObjectType)t;
         QPoint pos;
         in >> pos;
-        gameObject *go = new gameObject(this, myCount++, type, dimmer, direction);
+        gameObject *go = new gameObject(this, myCount++, type, dimmer, dir);
         go->label->setGeometry(pos.x(), pos.y(), go->label->width(), go->label->height());
     }
     updateScore();
@@ -389,6 +387,7 @@ void etsGame::on_actionNew_Game_triggered() // Starts a completely new game
     // First clear all the previous stuff...
     isRunning = true;
     clearAll();
+    ui->actionPause->setChecked(false);
 
     // (Re)set all the variables
     life = 1000;
