@@ -20,9 +20,9 @@ public:
     void setType(gameObjectType);
     gameObjectType getType();
     QLabel* label;
+    QPixmap sprite;
 
 private:
-    QPixmap sprite;
     gameObjectType type;
     QTimer* t;
     int direction;

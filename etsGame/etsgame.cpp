@@ -22,7 +22,9 @@ etsGame::etsGame(QWidget *parent) : // CONSTRUCTOR, QLabels, etc. are created (b
     changeDirectionX(0),
     isActive(false),
     isRunning(false),
-    isFullscreen(false)
+    isFullscreen(false),
+    scX(0.8),
+    scY(0.6)
 {
     writeLog("Application Started");
     ui->setupUi(this);
@@ -36,9 +38,10 @@ etsGame::etsGame(QWidget *parent) : // CONSTRUCTOR, QLabels, etc. are created (b
     // Create Player!
     player = new QLabel(this);
     player->setObjectName("Player");
-    QPixmap image("images\\sub.png");
-    player->setPixmap(image);
-    player->setGeometry(5,this->height()/2-image.height()/2,image.width(),image.height());
+    playerImage = new QPixmap("images/sub.png");
+    playerImage->scaled(playerImage->width()*scX,playerImage->height()*scY);
+    player->setPixmap(*playerImage);
+    player->setGeometry(5,this->height()/2-playerImage->height()/2,playerImage->width(),playerImage->height());
     player->hide();
 
     // Create a game QTimer
@@ -129,6 +132,10 @@ void etsGame::movePlayer(int y, int x) {
 
 void etsGame::changeResolution(int w, int h) // changes window and background size and adjusts objects' positions
 {
+    double formerScX = scX;
+    double formerScY = scY;
+    scX = (double)w/1000;
+    scY = (double)h/1000;
     this->setFixedSize(w,h);
     QPalette palette;
     QImage *img = new QImage("images/underWaterBackground.jpg");
@@ -138,14 +145,15 @@ void etsGame::changeResolution(int w, int h) // changes window and background si
 
     // set the positions of the objects
     player->stackUnder(pauseDisplay);
-    pauseDisplay->setGeometry(this->width()/2-100,this->height()/2-pauseDisplay->height()/2,200,pauseDisplay->height());
-    air->setGeometry(this->width()-60,50,40,250);
-    dimmer->setGeometry(0,21,this->width(),this->height());
+    playerImage->scaled(playerImage->width()*scX,playerImage->height()*scY);
+    player->setPixmap(*playerImage);
+    player->setGeometry(player->x()/formerScX*scX,player->y()/formerScY*scY,playerImage->width(),playerImage->height());
+    pauseDisplay->setGeometry(w/2-100,h/2-pauseDisplay->height()/2,200,pauseDisplay->height());
+    air->setGeometry(w-60,50,40,250);
+    dimmer->setGeometry(0,21,w,h);
     dimmer->stackUnder(pauseDisplay);
-    scoreDisplay->setGeometry(this->width()-60,340,50,30);
-    levelDisplay->setGeometry(this->width()-60,390,50,30);
-
-    player->setGeometry(5,this->height()/2-player->height()/2,player->width(),player->height()); // careful!!! what if out of bounds?
+    scoreDisplay->setGeometry(w-60,340,50,30);
+    levelDisplay->setGeometry(w-60,390,50,30);
 
     writeLog("Resolution changed to " + QString::number(w) + " x " + QString::number(h));
 }
