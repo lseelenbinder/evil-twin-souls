@@ -44,6 +44,10 @@ private:
     //
     bool cheatMode;
     //
+    void setScore(int);
+    void updateScore();
+    void setLife(int);
+    void updateLevel();
 
 private slots:
     void on_actionCheat_Mode_toggled(bool );
@@ -61,6 +65,8 @@ private slots:
     void on_actionFullscreen_triggered();
     void on_actionChange_Level_triggered();
     void on_actionNew_Game_triggered();
+    void on_actionSave_triggered();
+    void on_actionLoad_triggered();
     void keyPressEvent(QKeyEvent*);
     void keyReleaseEvent(QKeyEvent *);
     void tick(); // This is called every "tick" of the game.
@@ -73,8 +79,6 @@ private slots:
 
     void clearAll();
     void gameOver();
-    void save();
-    void load();
     void writeLog(QString);
 
 };
