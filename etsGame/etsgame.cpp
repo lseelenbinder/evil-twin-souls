@@ -4,6 +4,9 @@
 #include <QPixmap>
 #include <QTimer>
 #include <QLabel>
+#include <QFile>
+#include <QDateTime>
+#include <QTextStream>
 #include <QInputDialog>
 #include <QKeyEvent>
 #include <sstream>
@@ -21,6 +24,7 @@ etsGame::etsGame(QWidget *parent) : // CONSTRUCTOR, QLabels, etc. are created (b
     isRunning(false),
     isFullscreen(false)
 {
+    writeLog("Application Started");
     ui->setupUi(this);
     setFocusPolicy(Qt::StrongFocus);
 
@@ -49,11 +53,26 @@ etsGame::etsGame(QWidget *parent) : // CONSTRUCTOR, QLabels, etc. are created (b
     updateAir();
     air->hide();
 
+    dimmer = new QPushButton(this);
+    dimmer->setObjectName("Dimmer");
+    dimmer->setStyleSheet("border:0px; background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 rgba(0,30,100,150), stop: 1 rgba(0,10,40,130));");
+    dimmer->show();
+
     // Create score counter
     scoreDisplay = new QLabel(this);
     scoreDisplay->setObjectName("ScoreDisplay");
     scoreDisplay->setText("Score:\n00000");
+    scoreDisplay->setFont(QFont("Tempus Sans ITC",8, QFont::Bold));
+    scoreDisplay->setForegroundRole(QPalette::BrightText);
     scoreDisplay->hide();
+
+    // Create level display
+    levelDisplay = new QLabel(this);
+    levelDisplay->setObjectName("LevelDisplay");
+    levelDisplay->setText("Level 1");
+    levelDisplay->setFont(QFont("Tempus Sans ITC",8, QFont::Bold));
+    levelDisplay->setForegroundRole(QPalette::BrightText);
+    levelDisplay->hide();
 
     // IMPORTANT: sets also the objects positions!
     changeResolution(800,600);
@@ -101,7 +120,7 @@ void etsGame::movePlayer(int y, int x) {
     if (player->y() > this->height()) y = this->height() - player->y();
     if (player->x() + x < 5) x = 5 - player->x();
     if (player->x() + x > this->width()) x = this->width() - player->x();
-    player->setGeometry(player->x() + x,player->y() + y,player->width(),player->height());
+    player->move(player->x() + x,player->y() + y);
     player->show();
     if (player->y() > this->height() - player->height() && !cheatMode) {
         gameOver();
@@ -118,11 +137,17 @@ void etsGame::changeResolution(int w, int h) // changes window and background si
     this->setPalette(palette);
 
     // set the positions of the objects
+    player->stackUnder(pauseDisplay);
     pauseDisplay->setGeometry(this->width()/2-100,this->height()/2-pauseDisplay->height()/2,200,pauseDisplay->height());
-    scoreDisplay->setGeometry(this->width()-50,280,40,30);
-    air->setGeometry(this->width()-50,50,30,200);
+    air->setGeometry(this->width()-60,50,40,250);
+    dimmer->setGeometry(0,21,this->width(),this->height());
+    dimmer->stackUnder(pauseDisplay);
+    scoreDisplay->setGeometry(this->width()-60,340,50,30);
+    levelDisplay->setGeometry(this->width()-60,390,50,30);
 
     player->setGeometry(5,this->height()/2-player->height()/2,player->width(),player->height()); // careful!!! what if out of bounds?
+
+    writeLog("Resolution changed to " + QString::number(w) + " x " + QString::number(h));
 }
 
 void etsGame::clearAll() { // clears all the objects
@@ -135,6 +160,7 @@ void etsGame::clearAll() { // clears all the objects
     if (isActive) {
         player->hide();
         scoreDisplay->hide();
+        levelDisplay->hide();
         air->hide();
         gameTimer->stop();
     }
@@ -163,7 +189,10 @@ void etsGame::gameOver() {
     pauseDisplay->setText("GAME OVER");
     pauseDisplay->show();
     QSound::play("audio/sadTrombone.wav");
+    dimmer->show();
     // ...
+
+    writeLog("Game Over");
 }
 
 void etsGame::changePlayerMovement(int &dir, int &changeDir) {
@@ -199,57 +228,27 @@ void etsGame::tick() // contains most of the game logic and collision
             changePlayerMovement(directionX, changeDirectionX);
         }
         if (ticks % 5 == 0) {
-            movePlayer(direction, directionX); // move player!
-            QList<gameObject*> objs = this->findChildren<gameObject*>();
-            for (int i = 0; i < objs.length(); ++i) {
-                gameObject *obj = dynamic_cast<gameObject*>(objs[i]);
-                QLabel *l = obj->label;
-                l->setGeometry(l->x() + obj->getDirection(), l->y(), l->width(), l->height()); // move objects!
-                if (((player->x() >= l->x() && abs(l->x()-player->x()) <= l->width()-3) ||
-                     (player->x() <= l->x() && abs(l->x()-player->x()) <= player->width()-3)) &&
-                    ((player->y() >= l->y() && abs(l->y()-player->y()) <= l->height()-3) ||
-                     (player->y() <= l->y() && abs(l->y()-player->y()) <= player->height()-3))) { // collision!
-                    l->deleteLater();
-                    obj->deleteLater();
-                    if (obj->getType() == FISH && !cheatMode) { // collision with fish!
-                        life = life - 150 - level*50;
-                        QSound::play("audio/chomp.wav");
-                    } else if (obj->getType() == BUBBLE) { // collision with bubble!
-                        life += 100;
-                        score += 15;
-                        QSound::play("audio/pop.wav");
-                    }
-                }
-                if (l->x() < -l->width()) { // fish/bubble out of view
-                    if (obj->getType() == FISH) {
-                        score += 15;
-                    }
-                    l->deleteLater();
-                    obj->deleteLater();
-                }
-            }
+            movementAndCollision(); // player/bubble/fish movement and collision updating
         }
         if (rand() % (440-level*80) == 0) { // create new fish!
-            gameObject *fish = new gameObject(this, myCount++);
-            fish->setType(FISH);
-            fish->setDirection(rand() % 4 - 4 - level);
-            QPixmap image("images\\shark.png");
-            fish->setSprite(image);
+            int dir = rand() % 4 - 4 - level;
+            gameObject *fish = new gameObject(this, myCount++, FISH,
+                dimmer, dir);
+            QPixmap image("images/shark.png");
             int objX = this->width();
-            int objY = rand() % (this->height()-15) + 15;
-            fish->label->setGeometry(objX, objY, image.width(),image.height());
-            fish->label->show();
+            int objY = rand() % (this->height()-15-image.height()) + 15;
+            fish->setSprite(image);
+            fish->label->setGeometry(objX,objY,image.width(),image.height());
         }
         if (rand() % (350+level*50) == 0) { // create new bubble!
-            gameObject *bubble = new gameObject(this, myCount++);
-            bubble->setType(BUBBLE);
-            bubble->setDirection(rand() % 4 - 4 - level);
-            QPixmap image("images\\bubble.png");
-            bubble->setSprite(image);
+            int dir = rand() % 4 - 4 - level;
+            gameObject *bubble = new gameObject(this, myCount++, BUBBLE,
+                dimmer, dir);
+            QPixmap image("images/bubble.png");
             int objX = this->width();
-            int objY = rand() % (this->height()-15) + 15;
-            bubble->label->setGeometry(objX, objY, image.width(),image.height());
-            bubble->label->show();
+            int objY = rand() % (this->height()-15-image.height()) + 15;
+            bubble->setSprite(image);
+            bubble->label->setGeometry(objX,objY,image.width(),image.height());
         }
 
         if (ticks % 100 == 0) score += 10; // increase score every second
@@ -266,6 +265,38 @@ void etsGame::tick() // contains most of the game logic and collision
             } else {
                 pauseDisplay->hide();
             }
+        }
+    }
+}
+
+void etsGame::movementAndCollision() {
+    movePlayer(direction, directionX); // move player!
+    QList<gameObject*> objs = this->findChildren<gameObject*>();
+    for (int i = 0; i < objs.length(); ++i) {
+        gameObject *obj = dynamic_cast<gameObject*>(objs[i]);
+        QLabel *l = obj->label;
+        l->setGeometry(l->x() + obj->getDirection(), l->y(), l->width(), l->height()); // move objects!
+        if (((player->x() >= l->x() && abs(l->x()-player->x()) <= l->width()-3) ||
+             (player->x() <= l->x() && abs(l->x()-player->x()) <= player->width()-3)) &&
+            ((player->y() >= l->y() && abs(l->y()-player->y()) <= l->height()-3) ||
+             (player->y() <= l->y() && abs(l->y()-player->y()) <= player->height()-3))) { // collision!
+            l->deleteLater();
+            obj->deleteLater();
+            if (obj->getType() == FISH && !cheatMode) { // collision with fish!
+                life = life - 150 - level*50;
+                QSound::play("audio/chomp.wav");
+            } else if (obj->getType() == BUBBLE) { // collision with bubble!
+                life += 100;
+                score += 15;
+                QSound::play("audio/pop.wav");
+            }
+        }
+        if (l->x() < -l->width()) { // fish/bubble out of view
+            if (obj->getType() == FISH) {
+                score += 15;
+            }
+            l->deleteLater();
+            obj->deleteLater();
         }
     }
 }
@@ -287,6 +318,8 @@ void etsGame::on_actionNew_Game_triggered() // Starts a completely new game
     changeDirectionX = 0;
 
     // shows all the game interface objects
+    dimmer->hide();
+
     player->setGeometry(5,this->height()/2-player->height()/2,player->width(),player->height());
     player->show();
 
@@ -295,22 +328,42 @@ void etsGame::on_actionNew_Game_triggered() // Starts a completely new game
     scoreDisplay->setText("Score:\n00000");
     scoreDisplay->show();
 
+    levelDisplay->setText("Level " + QString::number(level));
+    levelDisplay->show();
+
     gameTimer->start();
 
     pauseDisplay->setText("     PAUSE");
 
     isRunning = true;
     isActive = true;
+
+    writeLog("New Game Created");
 }
 
 void etsGame::updateAir() {
     if (life > 1000) life = 1000;
     if (life < 50) life = 50; // gameOver
     stringstream ss;
-    ss << "border-radius: 10px; border: ";
-    ss << "0px;background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: " << (double)(100-life/10)/100 << " rgba(" << (220 - life/10) << ", " << (life/10) << ", " << (10 + life/10) << ", 150), stop: " << (double)(100-life/10)/100 + 0.05 << " rgba(50,160,180,140), stop: 1 rgba(20,120,140,160)); ";
+    ss << "border-radius: 20px; border:  3px solid white;";
+    ss << "background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: " << (double)(100-life/10)/100 << " rgba(" << (220 - life/10) << ", " << (life/10) << ", " << (10 + life/10) << ", 150), stop: " << (double)(100-life/10)/100 + 0.05 << " rgba(30,130,150,140), stop: 1 rgba(10,100,120,160)); ";
     air->setStyleSheet(QString::fromStdString(ss.str()));
     if (life == 50) gameOver();
+}
+
+void etsGame::writeLog(QString text) {
+    QDateTime dt = QDateTime::currentDateTime();
+
+    if(!QFile("log.txt").exists())
+    {
+      new QFile("log.txt");
+    }
+
+    QFile file("log.txt");
+    file.open(QIODevice::Append);
+    QTextStream out(&file);
+    out << dt.date().toString("MM/dd/yyyy") << ", " << dt.time().toString("hh:mm:ss") << ": " << text << '\n';
+    file.close();
 }
 
 void etsGame::on_actionChange_Level_triggered()
@@ -321,7 +374,12 @@ void etsGame::on_actionChange_Level_triggered()
         // less bubbles
         // faster fish and bubbles
         // deadlier fish
+    ui->actionPause->setChecked(true);
+    on_actionPause_triggered();
     level = QInputDialog::getInteger(this, tr("Integer"), tr("Enter the level (between 1 and 5):"), level, 1, 5, 1);
+    ui->actionPause->setChecked(false);
+    on_actionPause_triggered();
+    levelDisplay->setText("Level " + QString::number(level));
 }
 
 void etsGame::on_actionPause_triggered()
