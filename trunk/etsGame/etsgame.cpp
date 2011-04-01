@@ -104,6 +104,9 @@ void etsGame::keyPressEvent(QKeyEvent *event)
         } else if (event->key() == Qt::Key_Left) {
             directionX = -1;
             changeDirectionX = -1;
+        } else if (event->key() == Qt::Key_P) {
+            ui->actionPause->setChecked(!ui->actionPause->isChecked());
+            on_actionPause_triggered();
         }
     }
 }
