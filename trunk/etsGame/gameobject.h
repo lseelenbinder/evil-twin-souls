@@ -13,7 +13,7 @@ class gameObject : public QObject
     Q_OBJECT
 
 public:
-    explicit gameObject(QObject *parent = 0, int myCount = 0);
+    gameObject(QObject *parent, int myCount, gameObjectType, QWidget*, int);
     void setSprite(QPixmap p);
     int getDirection();
     void setDirection(int);

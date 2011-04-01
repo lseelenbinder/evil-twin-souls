@@ -1,11 +1,15 @@
 #include "gameobject.h"
 
-gameObject::gameObject(QObject *parent, int myCount) :
+gameObject::gameObject(QObject *parent, int myCount, gameObjectType tp, QWidget *w, int dir) :
     QObject(parent)
 {
     QWidget *wdgt = dynamic_cast<QWidget*>(parent);
     label = new QLabel(wdgt);
     label->setObjectName("L" + QString::number(myCount));
+    this->setType(tp);
+    this->setDirection(dir);
+    this->label->stackUnder(w);
+    this->label->show();
 }
 
 void gameObject::setSprite(QPixmap p) {

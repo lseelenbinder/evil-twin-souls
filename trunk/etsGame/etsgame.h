@@ -24,17 +24,14 @@ private:
     Ui::etsGame *ui;
     QLabel *player;
     QPushButton *air;
+    QPushButton *dimmer;
     QLabel *scoreDisplay;
     QLabel *pauseDisplay;
+    QLabel *levelDisplay;
     QTimer *gameTimer;
-    void movePlayer(int, int);
-    void changePlayerMovement(int&, int&);
-    int score;
-    int life;
-    int level;
+    int score, life, level;
     int ticks;
-    int direction;
-    int changeDirection; // in which direction the direction is changing (up or down) when the key is keeped pressed.
+    int direction, changeDirection; // direction and how it is changing (up or down) while the key is not released.
     int directionX, changeDirectionX;
     int myCount;
     bool isActive; // is a game loaded at the moment?
@@ -68,11 +65,15 @@ private slots:
     void changeResolution(int, int);
     void updateAir();
 
+    void movePlayer(int, int);
+    void changePlayerMovement(int&, int&);
+    void movementAndCollision();
+
     void clearAll();
     void gameOver();
     void save();
     void load();
-
+    void writeLog(QString);
 
 };
 
