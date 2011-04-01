@@ -23,6 +23,7 @@ public:
 private:
     Ui::etsGame *ui;
     QLabel *player;
+    QPixmap *playerImage;
     QPushButton *air;
     QPushButton *dimmer;
     QLabel *scoreDisplay;
@@ -39,6 +40,7 @@ private:
     bool isFullscreen;
     int lastResX;
     int lastResY;
+    double scX, scY; // scaling of images' sizes and positions
     //
     bool cheatMode;
     //
