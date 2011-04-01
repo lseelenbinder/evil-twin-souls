@@ -554,3 +554,4 @@ void etsGame::updateScore()
 }
 void etsGame::setLife(int n) { life = n; updateAir(); }
 void etsGame::updateLevel() { levelDisplay->setText("Level " + QString::number(level)); }
+void etsGame::on_actionExit_triggered() { QApplication::exit(0); }
