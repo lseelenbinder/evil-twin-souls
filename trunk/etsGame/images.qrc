@@ -1,0 +1,14 @@
+<RCC>
+    <qresource prefix="/">
+        <file>images/bubble.jpg</file>
+        <file>images/bubble.png</file>
+        <file>images/fish.jpg</file>
+        <file>images/player.jpg</file>
+        <file>images/shark.png</file>
+        <file>images/sub.png</file>
+        <file>images/underWaterBackground.jpg</file>
+        <file>audio/chomp.wav</file>
+        <file>audio/pop.wav</file>
+        <file>audio/sadTrombone.wav</file>
+    </qresource>
+</RCC>
