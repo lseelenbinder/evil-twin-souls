@@ -24,7 +24,6 @@ public:
 
 private:
     gameObjectType type;
-    QTimer* t;
     int direction;
 
 signals:

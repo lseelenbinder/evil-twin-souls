@@ -10,6 +10,9 @@
 #include <QInputDialog>
 #include <QKeyEvent>
 #include <sstream>
+#include <QMessageBox>
+#include <QString>
+#include <QFileDialog>
 
 using namespace std;
 
@@ -64,7 +67,7 @@ etsGame::etsGame(QWidget *parent) : // CONSTRUCTOR, QLabels, etc. are created (b
     // Create score counter
     scoreDisplay = new QLabel(this);
     scoreDisplay->setObjectName("ScoreDisplay");
-    scoreDisplay->setText("Score:\n00000");
+    setScore(0);
     scoreDisplay->setFont(QFont("Tempus Sans ITC",8, QFont::Bold));
     scoreDisplay->setForegroundRole(QPalette::BrightText);
     scoreDisplay->hide();
@@ -72,7 +75,7 @@ etsGame::etsGame(QWidget *parent) : // CONSTRUCTOR, QLabels, etc. are created (b
     // Create level display
     levelDisplay = new QLabel(this);
     levelDisplay->setObjectName("LevelDisplay");
-    levelDisplay->setText("Level 1");
+    updateLevel();
     levelDisplay->setFont(QFont("Tempus Sans ITC",8, QFont::Bold));
     levelDisplay->setForegroundRole(QPalette::BrightText);
     levelDisplay->hide();
@@ -177,17 +180,99 @@ void etsGame::clearAll() { // clears all the objects
     isRunning = false;
 }
 
-void etsGame::save()
+void etsGame::on_actionSave_triggered()
 {
-    
+    ui->actionPause->setChecked(true);
+    on_actionPause_triggered();
+    QList<gameObject*> kids = this->findChildren<gameObject*>();
+    QString filename = QFileDialog::getSaveFileName(this, "Save Form", "", "");
+    QFile file(filename);
+
+    if (!file.open(QIODevice::WriteOnly))
+    {
+        QMessageBox::information(this, tr("Unable to open file"), file.errorString());
+        return;
+    }
+
+    QDataStream out(&file);
+    out.setVersion(QDataStream::Qt_4_6); // Change this based on current Qt version
+    out << score << life << level;
+    out << ticks;
+    out << direction << changeDirection << directionX << changeDirectionX;
+    out << isFullScreen();
+    out << cheatMode;
+    out << player->x() << player->y();
+
+    out << kids.length();
+    for (int i = 0; i < kids.length(); ++i)
+    {
+        gameObject *go = dynamic_cast<gameObject*>(kids[i]);
+        out << go->getType();
+        out << go->getDirection();
+        out << go->label->pos();
+    }
+
+    file.close();
 }
-void etsGame::load()
+void etsGame::on_actionLoad_triggered()
 {
     clearAll();
     
-    // Code Loading here...
+    QString filename = QFileDialog::getOpenFileName(this, "Load Form", "", "");
+    QFile file(filename);
+
+    if (!file.open(QIODevice::ReadOnly))
+    {
+        QMessageBox::information(this, tr("Unable to open file"), file.errorString());
+        return;
+    }
+
+    QDataStream in(&file);
+    in.setVersion(QDataStream::Qt_4_6); // Change this based on current Qt version
+
+    on_actionNew_Game_triggered();
+    ui->actionPause->setChecked(true);
+    on_actionPause_triggered();
+
+    int changeDir, dirX, changeDirX;
+    bool full, cheat;
+    QPoint playerPos;
+
+    in >> score >> life >> level;
+    in >> ticks;
+    in >> direction >> changeDir >> dirX >> changeDirX;
+    in >> full;
+    in >> cheat;
+    int x, y;
+    in >> x >> y;
+
+    int len;
+    in >> len;
+    for (int k = 0; k < len; k++)
+    {
+        int t, direction;
+        gameObjectType type;
+        in >> t >> direction;
+        type = (gameObjectType)t;
+        QPoint pos;
+        in >> pos;
+        gameObject *go = new gameObject(this, myCount++, type, dimmer, direction);
+        go->label->setGeometry(pos.x(), pos.y(), go->label->width(), go->label->height());
+    }
+    updateScore();
+    updateAir();
+    updateLevel();
+    on_actionPause_triggered();
+    tick();
+    ui->actionPause->setChecked(true);
+    on_actionPause_triggered();
     
     changeResolution(this->width(), this->height()); // sets the interface objects' positions
+    player->setGeometry(x, y, player->width(), player->height());
+    if (full) {
+        ui->actionFullscreen->setChecked(true);
+        on_actionFullscreen_triggered();
+    }
 }
 
 void etsGame::gameOver() {
@@ -240,31 +325,18 @@ void etsGame::tick() // contains most of the game logic and collision
         }
         if (rand() % (440-level*80) == 0) { // create new fish!
             int dir = rand() % 4 - 4 - level;
-            gameObject *fish = new gameObject(this, myCount++, FISH,
+            new gameObject(this, myCount++, FISH,
                 dimmer, dir);
-            QPixmap image("images/shark.png");
-            int objX = this->width();
-            int objY = rand() % (this->height()-15-image.height()) + 15;
-            fish->setSprite(image);
-            fish->label->setGeometry(objX,objY,image.width(),image.height());
         }
         if (rand() % (350+level*50) == 0) { // create new bubble!
             int dir = rand() % 4 - 4 - level;
-            gameObject *bubble = new gameObject(this, myCount++, BUBBLE,
+            new gameObject(this, myCount++, BUBBLE,
                 dimmer, dir);
-            QPixmap image("images/bubble.png");
-            int objX = this->width();
-            int objY = rand() % (this->height()-15-image.height()) + 15;
-            bubble->setSprite(image);
-            bubble->label->setGeometry(objX,objY,image.width(),image.height());
         }
 
         if (ticks % 100 == 0) score += 10; // increase score every second
-        QString scoreText = QString::number(score); // update score
-        while (scoreText.length() < 5)
-            scoreText = '0' + scoreText;
-        scoreDisplay->setText("Score:\n" + scoreText);
 
+        updateScore();
         updateAir(); // update air level!
     } else {
         if (ticks % 80 == 0) { // make the "PAUSE" label blink
@@ -333,10 +405,10 @@ void etsGame::on_actionNew_Game_triggered() // Starts a completely new game
 
     air->show();
 
-    scoreDisplay->setText("Score:\n00000");
+    setScore(0);
     scoreDisplay->show();
 
-    levelDisplay->setText("Level " + QString::number(level));
+    updateLevel();
     levelDisplay->show();
 
     gameTimer->start();
@@ -387,7 +459,7 @@ void etsGame::on_actionChange_Level_triggered()
     level = QInputDialog::getInteger(this, tr("Integer"), tr("Enter the level (between 1 and 5):"), level, 1, 5, 1);
     ui->actionPause->setChecked(false);
     on_actionPause_triggered();
-    levelDisplay->setText("Level " + QString::number(level));
+    updateLevel();
 }
 
 void etsGame::on_actionPause_triggered()
@@ -472,3 +544,13 @@ void etsGame::on_actionCheat_Mode_toggled(bool onOff)
     cheatMode=onOff;
     if (cheatMode) life = 1000;
 }
+void etsGame::setScore(int n) { score = n; updateScore();}
+void etsGame::updateScore()
+{
+    QString scoreText = QString::number(score); // update score
+    while (scoreText.length() < 5)
+        scoreText = '0' + scoreText;
+    scoreDisplay->setText("Score:\n" + scoreText);
+}
+void etsGame::setLife(int n) { life = n; updateAir(); }
+void etsGame::updateLevel() { levelDisplay->setText("Level " + QString::number(level)); }
