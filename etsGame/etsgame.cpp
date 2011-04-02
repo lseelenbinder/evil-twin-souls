@@ -33,6 +33,10 @@ etsGame::etsGame(QWidget *parent) : // CONSTRUCTOR, QLabels, etc. are created (b
     ui->setupUi(this);
     setFocusPolicy(Qt::StrongFocus);
 
+    // Assign Fish/Bubble pixmaps
+    fishImage = new QPixmap("images/shark.png");
+    bubbleImage = new QPixmap("images/bubble.png");
+
     // Create Pause-Label
     pauseDisplay = new QLabel(this);
     pauseDisplay->setFont(QFont("Tempus Sans ITC",25));
@@ -42,7 +46,6 @@ etsGame::etsGame(QWidget *parent) : // CONSTRUCTOR, QLabels, etc. are created (b
     player = new QLabel(this);
     player->setObjectName("Player");
     playerImage = new QPixmap("images/sub.png");
-    playerImage->scaled(playerImage->width()*scX,playerImage->height()*scY);
     player->setPixmap(*playerImage);
     player->setGeometry(5,this->height()/2-playerImage->height()/2,playerImage->width(),playerImage->height());
     player->hide();
@@ -144,22 +147,40 @@ void etsGame::changeResolution(int w, int h) // changes window and background si
     scY = (double)h/1000;
     this->setFixedSize(w,h);
     QPalette palette;
-    QImage *img = new QImage("images/underWaterBackground.jpg");
-    *img = img->scaled(w,h);
-    palette.setBrush(this->backgroundRole(), QBrush(QImage(*img)));
+    QImage img("images/underWaterBackground.jpg");
+    img = img.scaled(w,h);
+    palette.setBrush(this->backgroundRole(), QBrush(img));
     this->setPalette(palette);
+
+    delete playerImage; // resize player
+    playerImage = new QPixmap("images/sub.png");
+    *playerImage = playerImage->scaled(playerImage->width()/0.8*scX,playerImage->height()/0.6*scY);
+    player->setPixmap(*playerImage);
+    player->setGeometry((double)player->x()/formerScX*scX,(double)player->y()/formerScY*scY,playerImage->width(),playerImage->height());
 
     // set the positions of the objects
     player->stackUnder(pauseDisplay);
-    playerImage->scaled(playerImage->width()*scX,playerImage->height()*scY);
-    player->setPixmap(*playerImage);
-    player->setGeometry(player->x()/formerScX*scX,player->y()/formerScY*scY,playerImage->width(),playerImage->height());
     pauseDisplay->setGeometry(w/2-100,h/2-pauseDisplay->height()/2,200,pauseDisplay->height());
     air->setGeometry(w-60,50,40,250);
     dimmer->setGeometry(0,21,w,h);
     dimmer->stackUnder(pauseDisplay);
     scoreDisplay->setGeometry(w-60,340,50,30);
     levelDisplay->setGeometry(w-60,390,50,30);
+
+    delete fishImage; // resize fish
+    fishImage = new QPixmap("images/shark.png");
+    *fishImage = fishImage->scaled(fishImage->width()/0.8*scX,fishImage->height()/0.6*scY);
+
+    delete bubbleImage; // resize bubble
+    bubbleImage = new QPixmap("images/bubble.png");
+    *bubbleImage = bubbleImage->scaled(bubbleImage->width()/0.8*scX,bubbleImage->height()/0.6*scY);
+
+    QList<gameObject*> objs = this->findChildren<gameObject*>();
+    for (int i = 0; i < objs.length(); ++i) {
+        gameObject *obj = dynamic_cast<gameObject*>(objs[i]);
+        obj->setSprite();
+        obj->label->move(obj->label->x()/formerScX*scX,obj->label->y()/formerScY*scY);
+    }
 
     writeLog("Resolution changed to " + QString::number(w) + " x " + QString::number(h));
 }
@@ -216,10 +237,11 @@ void etsGame::on_actionSave_triggered()
     }
 
     file.close();
+
+    writeLog("Game Saved: " + filename);
 }
 void etsGame::on_actionLoad_triggered()
 {
-    clearAll();
     
     QString filename = QFileDialog::getOpenFileName(this, "Load Form", "", "");
     QFile file(filename);
@@ -257,7 +279,7 @@ void etsGame::on_actionLoad_triggered()
         type = (gameObjectType)t;
         QPoint pos;
         in >> pos;
-        gameObject *go = new gameObject(this, myCount++, type, dimmer, dir);
+        gameObject *go = new gameObject(this, myCount++, type, dimmer, dir, scX, scY);
         go->label->setGeometry(pos.x(), pos.y(), go->label->width(), go->label->height());
     }
     updateScore();
@@ -274,6 +296,9 @@ void etsGame::on_actionLoad_triggered()
         ui->actionFullscreen->setChecked(true);
         on_actionFullscreen_triggered();
     }
+    writeLog("Game Loaded: " + filename);
+
+    file.close();
 }
 
 void etsGame::gameOver() {
@@ -304,8 +329,8 @@ void etsGame::changePlayerMovement(int &dir, int &changeDir) {
         }
     } else {
         dir += changeDir;
-        if (dir < -12) dir = -12;
-        else if (dir > 12) dir = 12;
+        if (dir < -12*scX) dir = -12*scX;
+        else if (dir > 12*scX) dir = 12*scX;
         else if (!cheatMode && changeDir != 0) --life;
     }
 }
@@ -325,14 +350,14 @@ void etsGame::tick() // contains most of the game logic and collision
             movementAndCollision(); // player/bubble/fish movement and collision updating
         }
         if (rand() % (440-level*80) == 0) { // create new fish!
-            int dir = rand() % 4 - 4 - level;
+            int dir = rand() % 4*scX - 4*scX - level;
             new gameObject(this, myCount++, FISH,
-                dimmer, dir);
+                dimmer, dir, scX, scY);
         }
         if (rand() % (350+level*50) == 0) { // create new bubble!
-            int dir = rand() % 4 - 4 - level;
+            int dir = rand() % 4*scX - 4*scX - level;
             new gameObject(this, myCount++, BUBBLE,
-                dimmer, dir);
+                dimmer, dir, scX, scY);
         }
 
         if (ticks % 100 == 0) score += 10; // increase score every second
@@ -438,7 +463,7 @@ void etsGame::writeLog(QString text) {
 
     if(!QFile("log.txt").exists())
     {
-      new QFile("log.txt");
+      QFile("log.txt");
     }
 
     QFile file("log.txt");

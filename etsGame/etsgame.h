@@ -18,6 +18,7 @@ class etsGame : public QMainWindow
 
 public:
     explicit etsGame(QWidget *parent = 0);
+    QPixmap *fishImage, *bubbleImage;
     ~etsGame();
 
 private:
