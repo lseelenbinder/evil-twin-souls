@@ -1,7 +1,7 @@
 /********************************************************************************
 ** Form generated from reading UI file 'etsgame.ui'
 **
-** Created: Fri Apr 1 16:42:09 2011
+** Created: Fri 1. Apr 20:18:28 2011
 **      by: Qt User Interface Compiler version 4.6.3
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!
@@ -57,7 +57,7 @@ public:
     {
         if (etsGame->objectName().isEmpty())
             etsGame->setObjectName(QString::fromUtf8("etsGame"));
-        etsGame->resize(707, 462);
+        etsGame->resize(715, 462);
         actionChange_Level = new QAction(etsGame);
         actionChange_Level->setObjectName(QString::fromUtf8("actionChange_Level"));
         actionSave = new QAction(etsGame);
@@ -102,7 +102,7 @@ public:
         etsGame->setCentralWidget(centralWidget);
         menuBar = new QMenuBar(etsGame);
         menuBar->setObjectName(QString::fromUtf8("menuBar"));
-        menuBar->setGeometry(QRect(0, 0, 707, 21));
+        menuBar->setGeometry(QRect(0, 0, 715, 21));
         menuFile = new QMenu(menuBar);
         menuFile->setObjectName(QString::fromUtf8("menuFile"));
         menuChange_Resolution = new QMenu(menuFile);

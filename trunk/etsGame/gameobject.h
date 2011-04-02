@@ -13,14 +13,13 @@ class gameObject : public QObject
     Q_OBJECT
 
 public:
-    gameObject(QObject *parent, int myCount, gameObjectType, QWidget*, int);
-    void setSprite(QPixmap p);
+    gameObject(QObject *parent, int myCount, gameObjectType, QWidget*, int, int, int);
     int getDirection();
     void setDirection(int);
     void setType(gameObjectType);
     gameObjectType getType();
     QLabel* label;
-    QPixmap sprite;
+    void setSprite();
 
 private:
     gameObjectType type;
