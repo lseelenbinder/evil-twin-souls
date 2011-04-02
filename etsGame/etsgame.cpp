@@ -95,7 +95,7 @@ etsGame::~etsGame()
 void etsGame::keyPressEvent(QKeyEvent *event)
 {
     if (!event->isAutoRepeat()) {
-        if (event->key() == Qt::Key_Up && life > 100) {
+        if (event->key() == Qt::Key_Up && life > 50) {
             direction = -1;
             changeDirection = -1;
         } else if (event->key() == Qt::Key_Down) {
