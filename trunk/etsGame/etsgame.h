@@ -27,9 +27,8 @@ private:
     QPixmap *playerImage;
     QPushButton *air;
     QPushButton *dimmer;
-    QLabel *scoreDisplay;
-    QLabel *pauseDisplay;
-    QLabel *levelDisplay;
+    QPushButton *newGameButton;
+    QLabel *scoreDisplay, *pauseDisplay, *levelDisplay;
     QTimer *gameTimer;
     int score, life, level;
     int ticks;
@@ -81,6 +80,8 @@ private slots:
 
     void clearAll();
     void gameOver();
+    void gameWon();
+    void stopGame();
     void writeLog(QString);
 
 };

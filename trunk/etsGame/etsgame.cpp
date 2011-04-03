@@ -23,8 +23,6 @@ etsGame::etsGame(QWidget *parent) : // CONSTRUCTOR, QLabels, etc. are created (b
     level(1),
     changeDirection(0),
     changeDirectionX(0),
-    isActive(false),
-    isRunning(false),
     isFullscreen(false),
     scX(0.8),
     scY(0.6)
@@ -62,10 +60,18 @@ etsGame::etsGame(QWidget *parent) : // CONSTRUCTOR, QLabels, etc. are created (b
     updateAir();
     air->hide();
 
+    // Create dimmer
     dimmer = new QPushButton(this);
     dimmer->setObjectName("Dimmer");
     dimmer->setStyleSheet("border:0px; background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 rgba(0,30,100,150), stop: 1 rgba(0,10,40,130));");
-    dimmer->show();
+
+    // Create New Game PushButton
+    newGameButton = new QPushButton(this);
+    newGameButton->setStyleSheet("border-radius:10px; border:0px; background-color:qradialgradient(spread:pad, cx:0.5, cy:0.5, radius:0.5, fx:0.5, fy:0.5, stop:0 rgba(20, 130, 200, 150), stop:0.5 rgba(10, 90, 170, 100), stop:1 rgba(0,0,0,0))");
+    newGameButton->setText("New Game");
+    newGameButton->setFont(QFont("Tempus Sans ITC",20));
+    newGameButton->setCursor(Qt::PointingHandCursor);
+    connect(newGameButton,SIGNAL(clicked()),this,SLOT(on_actionNew_Game_triggered()));
 
     // Create score counter
     scoreDisplay = new QLabel(this);
@@ -85,6 +91,8 @@ etsGame::etsGame(QWidget *parent) : // CONSTRUCTOR, QLabels, etc. are created (b
 
     // IMPORTANT: sets also the objects positions!
     changeResolution(800,600);
+
+    stopGame(); // prepares "welcome" screen
 }
 
 etsGame::~etsGame()
@@ -110,6 +118,11 @@ void etsGame::keyPressEvent(QKeyEvent *event)
         } else if (event->key() == Qt::Key_P) {
             ui->actionPause->setChecked(!ui->actionPause->isChecked());
             on_actionPause_triggered();
+        } else if (event->key() == Qt::Key_N) {
+            on_actionNew_Game_triggered();
+        } else if (event->key() == Qt::Key_F11) {
+            ui->actionFullscreen->setChecked(!ui->actionFullscreen->isChecked());
+            on_actionFullscreen_triggered();
         }
     }
 }
@@ -162,6 +175,7 @@ void etsGame::changeResolution(int w, int h) // changes window and background si
     player->stackUnder(pauseDisplay);
     pauseDisplay->setGeometry(w/2-100,h/2-pauseDisplay->height()/2,200,pauseDisplay->height());
     air->setGeometry(w-60,50,40,250);
+    newGameButton->setGeometry(w/2-125,h/2+pauseDisplay->height()+50,250,100);
     dimmer->setGeometry(0,21,w,h);
     dimmer->stackUnder(pauseDisplay);
     scoreDisplay->setGeometry(w-60,340,50,30);
@@ -197,6 +211,7 @@ void etsGame::clearAll() { // clears all the objects
         scoreDisplay->hide();
         levelDisplay->hide();
         air->hide();
+        newGameButton->hide();
         gameTimer->stop();
     }
     pauseDisplay->hide();
@@ -302,16 +317,27 @@ void etsGame::on_actionLoad_triggered()
 }
 
 void etsGame::gameOver() {
-    isRunning = false;
-    isActive = false;
-    ticks = 0;
+    stopGame();
     pauseDisplay->setText("GAME OVER");
     pauseDisplay->show();
     QSound::play("audio/sadTrombone.wav");
-    dimmer->show();
-    // ...
-
     writeLog("Game Over");
+}
+
+void etsGame::gameWon() {
+    stopGame();
+    pauseDisplay->setText("YOU WON!");
+    pauseDisplay->show();
+    QSound::play("audio/victory.wav");
+    writeLog("Game Won");
+}
+
+void etsGame::stopGame() {
+    isRunning = false;
+    isActive = false;
+    ticks = 0;
+    dimmer->show();
+    newGameButton->show();
 }
 
 void etsGame::changePlayerMovement(int &dir, int &changeDir) {
@@ -426,6 +452,7 @@ void etsGame::on_actionNew_Game_triggered() // Starts a completely new game
 
     // shows all the game interface objects
     dimmer->hide();
+    newGameButton->hide();
 
     player->setGeometry(5,this->height()/2-player->height()/2,player->width(),player->height());
     player->show();
@@ -578,6 +605,9 @@ void etsGame::updateScore()
     while (scoreText.length() < 5)
         scoreText = '0' + scoreText;
     scoreDisplay->setText("Score:\n" + scoreText);
+    if (score>=5000) {
+        gameWon();
+    }
 }
 void etsGame::setLife(int n) { life = n; updateAir(); }
 void etsGame::updateLevel() { levelDisplay->setText("Level " + QString::number(level)); }

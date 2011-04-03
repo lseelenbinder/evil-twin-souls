@@ -1,7 +1,7 @@
 /********************************************************************************
 ** Form generated from reading UI file 'etsgame.ui'
 **
-** Created: Fri 1. Apr 20:18:28 2011
+** Created: Sat 2. Apr 13:15:27 2011
 **      by: Qt User Interface Compiler version 4.6.3
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!
@@ -147,7 +147,7 @@ public:
 
     void retranslateUi(QMainWindow *etsGame)
     {
-        etsGame->setWindowTitle(QApplication::translate("etsGame", "Best Game ever!!", 0, QApplication::UnicodeUTF8));
+        etsGame->setWindowTitle(QApplication::translate("etsGame", "Enormously Tricky Sharks", 0, QApplication::UnicodeUTF8));
         actionChange_Level->setText(QApplication::translate("etsGame", "Change Level", 0, QApplication::UnicodeUTF8));
         actionSave->setText(QApplication::translate("etsGame", "Save", 0, QApplication::UnicodeUTF8));
         actionLoad->setText(QApplication::translate("etsGame", "Load", 0, QApplication::UnicodeUTF8));
