@@ -34,6 +34,7 @@ etsGame::etsGame(QWidget *parent) : // CONSTRUCTOR, QLabels, etc. are created (b
     // Assign Fish/Bubble pixmaps
     fishImage = new QPixmap("images/shark.png");
     bubbleImage = new QPixmap("images/bubble.png");
+    sharkImage = new QPixmap("images/bigShark.png");
 
     // Create Pause-Label
     pauseDisplay = new QLabel(this);
@@ -184,6 +185,10 @@ void etsGame::changeResolution(int w, int h) // changes window and background si
     delete fishImage; // resize fish
     fishImage = new QPixmap("images/shark.png");
     *fishImage = fishImage->scaled(fishImage->width()/0.8*scX,fishImage->height()/0.6*scY);
+
+    delete sharkImage; // resize shark
+    sharkImage = new QPixmap("images/bigShark.png");
+    *sharkImage = sharkImage->scaled(sharkImage->width()/0.8*scX,sharkImage->height()/0.6*scY);
 
     delete bubbleImage; // resize bubble
     bubbleImage = new QPixmap("images/bubble.png");
@@ -385,6 +390,11 @@ void etsGame::tick() // contains most of the game logic and collision; is called
             new gameObject(this, myCount++, BUBBLE,
                 dimmer, dir, scX, scY); // calls the gameObject constructor for a bubble
         }
+        if (rand() % (2000-level*100) == 0) { // create deadly shark!
+            int dir = rand() % 4*scX - 4*scX - level; // random direction; speed depends on level
+            new gameObject(this,myCount++,SHARK,
+                dimmer, dir, scX, scY); // calls the gameObject constructor for a deadly shark
+        }
 
         if (ticks % 100 == 0) score += 10; // increase score every second
 
@@ -417,6 +427,9 @@ void etsGame::movementAndCollision() { // player, bubble, and fish movement and 
             if (obj->getType() == FISH && !cheatMode) { // collision is with a fish!
                 life = life - 150 - level*50; // decrease life (depending on level)
                 QSound::play("audio/chomp.wav");
+            } else if (obj->getType() == SHARK && !cheatMode) { // collision is with a shark!
+                    life = 50; // kills you!
+                    QSound::play("audio/chomp.wav");
             } else if (obj->getType() == BUBBLE) { // collision is with a bubble!
                 life += 100; // increase life (air level)
                 score += 15; // add to score
@@ -426,6 +439,8 @@ void etsGame::movementAndCollision() { // player, bubble, and fish movement and 
         if (l->x() < -l->width()) { // fish/bubble out of view
             if (obj->getType() == FISH) {
                 score += 15; // add 15 to score for every fish that escapes the screen on the left side
+            } else if (obj->getType() == SHARK) {
+                score +=50;
             }
             // delete the gameObject
             l->deleteLater();
@@ -619,6 +634,6 @@ void etsGame::on_actionHelp_triggered()
     QLabel *help = new QLabel();
     QPixmap *bgImage = new QPixmap("images/ibg.png");
     help->setPixmap(*bgImage);
-    help->setPixmap(*bgImage);
+    help->setFixedSize(bgImage->width(),bgImage->height());
     help->show();
 }
