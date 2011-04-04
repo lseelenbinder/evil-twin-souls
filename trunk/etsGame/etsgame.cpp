@@ -361,37 +361,37 @@ void etsGame::changePlayerMovement(int &dir, int &changeDir) {
     }
 }
 
-void etsGame::tick() // contains most of the game logic and collision
+void etsGame::tick() // contains most of the game logic and collision; is called every 10 milliseconds
 {
-    ++ticks;
-    if (isRunning) {
+    ++ticks; // increase number of ticks
+    if (isRunning) { // if the game is actually running
         if (ticks % (25-level*2) == 0 && !cheatMode) { // decrease life!
             --life;
         }
-        if (ticks % 8 == 0) { // change PlayerMovement direction
-            changePlayerMovement(direction, changeDirection);
-            changePlayerMovement(directionX, changeDirectionX);
+        if (ticks % 8 == 0) { // change the direction the player is moving every 8 ticks if necessary
+            changePlayerMovement(direction, changeDirection); // controls up and down movement
+            changePlayerMovement(directionX, changeDirectionX); // controls left and right movement
         }
         if (ticks % 5 == 0) {
             movementAndCollision(); // player/bubble/fish movement and collision updating
         }
-        if (rand() % (440-level*80) == 0) { // create new fish!
-            int dir = rand() % 4*scX - 4*scX - level;
+        if (rand() % (440-level*80) == 0) { // create new fish! The higher the level, the more.
+            int dir = rand() % 4*scX - 4*scX - level; // random direction; speed depends on level
             new gameObject(this, myCount++, FISH,
-                dimmer, dir, scX, scY);
+                dimmer, dir, scX, scY); // calls the gameObject constructor for a fish
         }
-        if (rand() % (350+level*50) == 0) { // create new bubble!
-            int dir = rand() % 4*scX - 4*scX - level;
+        if (rand() % (350+level*50) == 0) { // create new bubble! The higher the level, the less.
+            int dir = rand() % 4*scX - 4*scX - level; // random direction; speed depends on level
             new gameObject(this, myCount++, BUBBLE,
-                dimmer, dir, scX, scY);
+                dimmer, dir, scX, scY); // calls the gameObject constructor for a bubble
         }
 
         if (ticks % 100 == 0) score += 10; // increase score every second
 
-        updateScore();
+        updateScore(); // updates the score display
         updateAir(); // update air level!
-    } else {
-        if (ticks % 80 == 0) { // make the "PAUSE" label blink
+    } else { // if the game is not running: 
+        if (ticks % 80 == 0) { // make the "PAUSE" label blink every 80 ticks
             if (pauseDisplay->isHidden()) {
                 pauseDisplay->show();
             } else {
@@ -401,32 +401,33 @@ void etsGame::tick() // contains most of the game logic and collision
     }
 }
 
-void etsGame::movementAndCollision() {
+void etsGame::movementAndCollision() { // player, bubble, and fish movement and collision updating
     movePlayer(direction, directionX); // move player!
-    QList<gameObject*> objs = this->findChildren<gameObject*>();
-    for (int i = 0; i < objs.length(); ++i) {
+    QList<gameObject*> objs = this->findChildren<gameObject*>(); // get all the children of the form of type <gameObject*>
+    for (int i = 0; i < objs.length(); ++i) { // loop through all the gameObjects
         gameObject *obj = dynamic_cast<gameObject*>(objs[i]);
-        QLabel *l = obj->label;
+        QLabel *l = obj->label; // the objects label (just an abbreviation)
         l->setGeometry(l->x() + obj->getDirection(), l->y(), l->width(), l->height()); // move objects!
         if (((player->x() >= l->x() && abs(l->x()-player->x()) <= l->width()-3) ||
              (player->x() <= l->x() && abs(l->x()-player->x()) <= player->width()-3)) &&
             ((player->y() >= l->y() && abs(l->y()-player->y()) <= l->height()-3) ||
-             (player->y() <= l->y() && abs(l->y()-player->y()) <= player->height()-3))) { // collision!
-            l->deleteLater();
-            obj->deleteLater();
-            if (obj->getType() == FISH && !cheatMode) { // collision with fish!
-                life = life - 150 - level*50;
+             (player->y() <= l->y() && abs(l->y()-player->y()) <= player->height()-3))) { // collision condition between the player and the current gameObject!
+            l->deleteLater(); // delete the gameObject label
+            obj->deleteLater(); // delete the gameObject object
+            if (obj->getType() == FISH && !cheatMode) { // collision is with a fish!
+                life = life - 150 - level*50; // decrease life (depending on level)
                 QSound::play("audio/chomp.wav");
-            } else if (obj->getType() == BUBBLE) { // collision with bubble!
-                life += 100;
-                score += 15;
+            } else if (obj->getType() == BUBBLE) { // collision is with a bubble!
+                life += 100; // increase life (air level)
+                score += 15; // add to score
                 QSound::play("audio/pop.wav");
             }
         }
         if (l->x() < -l->width()) { // fish/bubble out of view
             if (obj->getType() == FISH) {
-                score += 15;
+                score += 15; // add 15 to score for every fish that escapes the screen on the left side
             }
+            // delete the gameObject
             l->deleteLater();
             obj->deleteLater();
         }
