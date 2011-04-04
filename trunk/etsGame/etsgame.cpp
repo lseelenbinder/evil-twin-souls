@@ -104,16 +104,16 @@ etsGame::~etsGame()
 void etsGame::keyPressEvent(QKeyEvent *event)
 {
     if (!event->isAutoRepeat()) {
-        if (event->key() == Qt::Key_Up && life > 50) {
+        if ((event->key() == Qt::Key_Up || event->key() == Qt::Key_W) && life > 50) {
             direction = -1;
             changeDirection = -1;
-        } else if (event->key() == Qt::Key_Down) {
+        } else if ((event->key() == Qt::Key_Down || event->key() == Qt::Key_S)) {
             changeDirection = 1;
             direction = 1;
-        } else if (event->key() == Qt::Key_Right) {
+        } else if ((event->key() == Qt::Key_Right || event->key() == Qt::Key_D)) {
             directionX = 1;
             changeDirectionX = 1;
-        } else if (event->key() == Qt::Key_Left) {
+        } else if ((event->key() == Qt::Key_Left || event->key() == Qt::Key_A)) {
             directionX = -1;
             changeDirectionX = -1;
         } else if (event->key() == Qt::Key_P) {
@@ -129,13 +129,13 @@ void etsGame::keyPressEvent(QKeyEvent *event)
 }
 void etsGame::keyReleaseEvent(QKeyEvent *event) {
     if (!event->isAutoRepeat()) {
-        if (event->key() == Qt::Key_Up && life > 100) {
+        if ((event->key() == Qt::Key_Up || event->key() == Qt::Key_W) && life > 100) {
             changeDirection = 1;
-        } else if (event->key() == Qt::Key_Down) {
+        } else if ((event->key() == Qt::Key_Down || event->key() == Qt::Key_S)) {
             changeDirection = -1;
-        } else if (event->key() == Qt::Key_Right) {
+        } else if ((event->key() == Qt::Key_Right || event->key() == Qt::Key_D)) {
             changeDirectionX = -1;
-        } else if (event->key() == Qt::Key_Left) {
+        } else if ((event->key() == Qt::Key_Left || event->key() == Qt::Key_A)) {
             changeDirectionX = 1;
         }
     }
