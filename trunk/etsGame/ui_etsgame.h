@@ -1,7 +1,7 @@
 /********************************************************************************
 ** Form generated from reading UI file 'etsgame.ui'
 **
-** Created: Sun Apr 3 23:28:29 2011
+** Created: Mon Apr 4 10:14:40 2011
 **      by: Qt User Interface Compiler version 4.6.3
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!

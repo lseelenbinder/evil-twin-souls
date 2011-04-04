@@ -32,9 +32,9 @@ etsGame::etsGame(QWidget *parent) : // CONSTRUCTOR, QLabels, etc. are created (b
     setFocusPolicy(Qt::StrongFocus);
 
     // Assign Fish/Bubble pixmaps
-    fishImage = new QPixmap("images/shark.png");
-    bubbleImage = new QPixmap("images/bubble.png");
-    sharkImage = new QPixmap("images/bigShark.png");
+    fishImage = new QPixmap(":/images/shark.png");
+    bubbleImage = new QPixmap(":/images/bubble.png");
+    sharkImage = new QPixmap(":/images/bigShark.png");
 
     // Create Pause-Label
     pauseDisplay = new QLabel(this);
@@ -44,7 +44,7 @@ etsGame::etsGame(QWidget *parent) : // CONSTRUCTOR, QLabels, etc. are created (b
     // Create Player!
     player = new QLabel(this);
     player->setObjectName("Player");
-    playerImage = new QPixmap("images/sub.png");
+    playerImage = new QPixmap(":/images/sub.png");
     player->setPixmap(*playerImage);
     player->setGeometry(5,this->height()/2-playerImage->height()/2,playerImage->width(),playerImage->height());
     player->hide();
@@ -161,13 +161,13 @@ void etsGame::changeResolution(int w, int h) // changes window and background si
     scY = (double)h/1000;
     this->setFixedSize(w,h);
     QPalette palette;
-    QImage img("images/underWaterBackground.jpg");
+    QImage img(":/images/underWaterBackground.jpg");
     img = img.scaled(w,h);
     palette.setBrush(this->backgroundRole(), QBrush(img));
     this->setPalette(palette);
 
     delete playerImage; // resize player
-    playerImage = new QPixmap("images/sub.png");
+    playerImage = new QPixmap(":/images/sub.png");
     *playerImage = playerImage->scaled(playerImage->width()/0.8*scX,playerImage->height()/0.6*scY);
     player->setPixmap(*playerImage);
     player->setGeometry((double)player->x()/formerScX*scX,(double)player->y()/formerScY*scY,playerImage->width(),playerImage->height());
@@ -183,15 +183,15 @@ void etsGame::changeResolution(int w, int h) // changes window and background si
     levelDisplay->setGeometry(w-60,390,50,30);
 
     delete fishImage; // resize fish
-    fishImage = new QPixmap("images/shark.png");
+    fishImage = new QPixmap(":/images/shark.png");
     *fishImage = fishImage->scaled(fishImage->width()/0.8*scX,fishImage->height()/0.6*scY);
 
     delete sharkImage; // resize shark
-    sharkImage = new QPixmap("images/bigShark.png");
+    sharkImage = new QPixmap(":/images/bigShark.png");
     *sharkImage = sharkImage->scaled(sharkImage->width()/0.8*scX,sharkImage->height()/0.6*scY);
 
     delete bubbleImage; // resize bubble
-    bubbleImage = new QPixmap("images/bubble.png");
+    bubbleImage = new QPixmap(":/images/bubble.png");
     *bubbleImage = bubbleImage->scaled(bubbleImage->width()/0.8*scX,bubbleImage->height()/0.6*scY);
 
     QList<gameObject*> objs = this->findChildren<gameObject*>();
@@ -325,7 +325,7 @@ void etsGame::gameOver() {
     stopGame();
     pauseDisplay->setText("GAME OVER");
     pauseDisplay->show();
-    QSound::play("audio/sadTrombone.wav");
+    QSound::play(":/audio/sadTrombone.wav");
     writeLog("Game Over");
 }
 
@@ -333,7 +333,7 @@ void etsGame::gameWon() {
     stopGame();
     pauseDisplay->setText("YOU WON!");
     pauseDisplay->show();
-    QSound::play("audio/victory.wav");
+    QSound::play(":/audio/victory.wav");
     writeLog("Game Won");
 }
 
@@ -426,14 +426,14 @@ void etsGame::movementAndCollision() { // player, bubble, and fish movement and 
             obj->deleteLater(); // delete the gameObject object
             if (obj->getType() == FISH && !cheatMode) { // collision is with a fish!
                 life = life - 150 - level*50; // decrease life (depending on level)
-                QSound::play("audio/chomp.wav");
+                QSound::play(":/audio/chomp.wav");
             } else if (obj->getType() == SHARK && !cheatMode) { // collision is with a shark!
                     life = 50; // kills you!
-                    QSound::play("audio/chomp.wav");
+                    QSound::play(":/audio/chomp.wav");
             } else if (obj->getType() == BUBBLE) { // collision is with a bubble!
                 life += 100; // increase life (air level)
                 score += 15; // add to score
-                QSound::play("audio/pop.wav");
+                QSound::play(":/audio/pop.wav");
             }
         }
         if (l->x() < -l->width()) { // fish/bubble out of view
@@ -632,7 +632,7 @@ void etsGame::on_actionExit_triggered() { QApplication::exit(0); }
 void etsGame::on_actionHelp_triggered()
 {
     QLabel *help = new QLabel();
-    QPixmap *bgImage = new QPixmap("images/ibg.png");
+    QPixmap *bgImage = new QPixmap(":/images/ibg.png");
     help->setPixmap(*bgImage);
     help->setFixedSize(bgImage->width(),bgImage->height());
     help->show();
