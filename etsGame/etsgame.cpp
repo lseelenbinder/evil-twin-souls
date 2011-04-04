@@ -637,3 +637,8 @@ void etsGame::on_actionHelp_triggered()
     help->setFixedSize(bgImage->width(),bgImage->height());
     help->show();
 }
+void etsGame::focusOutEvent(QFocusEvent *)
+{
+    ui->actionPause->setChecked(true);
+    on_actionPause_triggered();
+}
