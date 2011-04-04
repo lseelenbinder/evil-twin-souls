@@ -57,6 +57,7 @@
     <addaction name="actionNew_Game"/>
     <addaction name="actionPause"/>
     <addaction name="actionCheat_Mode"/>
+    <addaction name="actionHelp"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuGasme"/>
@@ -167,6 +168,11 @@
   <action name="actionExit">
    <property name="text">
     <string>Exit</string>
+   </property>
+  </action>
+  <action name="actionHelp">
+   <property name="text">
+    <string>Instructions</string>
    </property>
   </action>
  </widget>

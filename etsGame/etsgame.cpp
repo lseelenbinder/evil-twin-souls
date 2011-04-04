@@ -613,3 +613,12 @@ void etsGame::updateScore()
 void etsGame::setLife(int n) { life = n; updateAir(); }
 void etsGame::updateLevel() { levelDisplay->setText("Level " + QString::number(level)); }
 void etsGame::on_actionExit_triggered() { QApplication::exit(0); }
+
+void etsGame::on_actionHelp_triggered()
+{
+    QLabel *help = new QLabel();
+    QPixmap *bgImage = new QPixmap("images/ibg.png");
+    help->setPixmap(*bgImage);
+    help->setPixmap(*bgImage);
+    help->show();
+}

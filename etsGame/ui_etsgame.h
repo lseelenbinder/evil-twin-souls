@@ -1,7 +1,7 @@
 /********************************************************************************
 ** Form generated from reading UI file 'etsgame.ui'
 **
-** Created: Sat 2. Apr 13:15:27 2011
+** Created: Sun Apr 3 23:28:29 2011
 **      by: Qt User Interface Compiler version 4.6.3
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!
@@ -45,6 +45,7 @@ public:
     QAction *actionFullscreen;
     QAction *actionCheat_Mode;
     QAction *actionExit;
+    QAction *actionHelp;
     QWidget *centralWidget;
     QMenuBar *menuBar;
     QMenu *menuFile;
@@ -97,6 +98,8 @@ public:
         actionCheat_Mode->setCheckable(true);
         actionExit = new QAction(etsGame);
         actionExit->setObjectName(QString::fromUtf8("actionExit"));
+        actionHelp = new QAction(etsGame);
+        actionHelp->setObjectName(QString::fromUtf8("actionHelp"));
         centralWidget = new QWidget(etsGame);
         centralWidget->setObjectName(QString::fromUtf8("centralWidget"));
         etsGame->setCentralWidget(centralWidget);
@@ -139,6 +142,7 @@ public:
         menuGasme->addAction(actionNew_Game);
         menuGasme->addAction(actionPause);
         menuGasme->addAction(actionCheat_Mode);
+        menuGasme->addAction(actionHelp);
 
         retranslateUi(etsGame);
 
@@ -166,6 +170,7 @@ public:
         actionFullscreen->setText(QApplication::translate("etsGame", "Fullscreen", 0, QApplication::UnicodeUTF8));
         actionCheat_Mode->setText(QApplication::translate("etsGame", "Cheat Mode", 0, QApplication::UnicodeUTF8));
         actionExit->setText(QApplication::translate("etsGame", "Exit", 0, QApplication::UnicodeUTF8));
+        actionHelp->setText(QApplication::translate("etsGame", "Instructions", 0, QApplication::UnicodeUTF8));
         menuFile->setTitle(QApplication::translate("etsGame", "File", 0, QApplication::UnicodeUTF8));
         menuChange_Resolution->setTitle(QApplication::translate("etsGame", "Change Resolution", 0, QApplication::UnicodeUTF8));
         menuGasme->setTitle(QApplication::translate("etsGame", "Game", 0, QApplication::UnicodeUTF8));
