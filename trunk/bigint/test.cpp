@@ -88,6 +88,38 @@ void ev_test() {
 
 void td_test() {
     // Thomas Dalton Tests
+    
+    BigInt td1(789);
+    assert(td1.toString() == "789", "int constructor and toString test");
+    
+    BigInt td2("456");
+    assert(td2.toString() == "456", "string constructor test");
+    
+    BigInt td3(5);
+    BigInt td4(3);
+    BigInt td5 = td3+td4;
+    assert(td5.toString() == "8", "addition test");
+    assert(td3.toString() == "5", "constant first term addition test");
+    assert(td4.toString() == "3", "constant second term addition test");
+    
+    BigInt td6("123456789");
+    BigInt td7("987654321");
+    BigInt td8 = td6+td7;
+    assert(td8.toString() == "1111111110", "addition test");
+    assert(td6.toString() == "123456789", "constant first term addition test");
+    assert(td7.toString() == "987654321", "constant second term addition test");
+    
+    
+    BigInt td9(6);
+    BigInt td10(2);
+    BigInt td11 = td9*td10;
+    assert(td11.toString() == "12", "multiplication test")
+    
+    BigInt td12(12345678910);
+    BigInt td13(10987654321);
+    BigInt td14 = td12*td13;
+    assert(td14.toString() == "135650052221140070110", "multiplication test");
+    
 }
 
 int main() {
