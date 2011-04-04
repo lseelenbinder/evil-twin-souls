@@ -1,0 +1,41 @@
+Testing
+=======
+
+Methods:
+
+bool assert(bool, string)
+    Takes a boolean argument and a string argument.
+    bool: The property you are testing. E.g.,
+
+        80 == 80
+        "Hello, world" != "Goodbye, world"
+
+    string:
+        The name of the test. E.g.,
+
+        "Test of string constructor"
+        "Test that 80 is equal to 80"
+    Methodology:
+        If the bool is true, it prints:
+            Test passed: {string}
+        If the bool is false, it prints:
+            Test failed !!! : {string}
+
+
+bool assert_false(bool, string)
+    Exact opposite of assert(). It tests if a boolean is false.
+
+    Methodology:
+        If the bool is false, it prints:
+            Test passed: {string}
+        If the bool is true, it prints:
+            Test failed !!! : {string}
+
+bool assert_equal_int(int, int, string)
+    Tests for equality of two ints.
+
+    Methodology:
+        Exactly the same as assert(), except that it checks for integer equality.
+
+bool assert_equal_string(string, string, string)
+    Tests for string (std::string) equality.
