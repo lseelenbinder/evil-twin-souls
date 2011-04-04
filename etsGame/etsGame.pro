@@ -11,3 +11,6 @@ INCLUDEPATH += .
 HEADERS += etsgame.h gameobject.h
 FORMS += etsgame.ui
 SOURCES += etsgame.cpp gameobject.cpp main.cpp
+
+RESOURCES += \
+    images.qrc
