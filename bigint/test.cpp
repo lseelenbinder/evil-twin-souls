@@ -113,10 +113,10 @@ void td_test() {
     BigInt td9(6);
     BigInt td10(2);
     BigInt td11 = td9*td10;
-    assert(td11.toString() == "12", "multiplication test")
+    assert(td11.toString() == "12", "multiplication test");
     
-    BigInt td12(12345678910);
-    BigInt td13(10987654321);
+    BigInt td12("12345678910");
+    BigInt td13("10987654321");
     BigInt td14 = td12*td13;
     assert(td14.toString() == "135650052221140070110", "multiplication test");
     
