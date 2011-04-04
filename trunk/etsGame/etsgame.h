@@ -41,15 +41,14 @@ private:
     int lastResX;
     int lastResY;
     double scX, scY; // scaling of images' sizes and positions
-    //
     bool cheatMode;
-    //
     void setScore(int);
     void updateScore();
     void setLife(int);
     void updateLevel();
 
 private slots:
+    void on_actionHelp_triggered();
     void on_actionCheat_Mode_toggled(bool );
     void on_actionPause_triggered();
     void on_action1600_x_900_triggered();
