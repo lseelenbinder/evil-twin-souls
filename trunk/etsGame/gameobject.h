@@ -6,7 +6,7 @@
 #include <QTimer>
 #include <QPixmap>
 
-enum gameObjectType {FISH, BUBBLE, BULLET};
+enum gameObjectType {FISH, BUBBLE, SHARK};
 
 class gameObject : public QObject
 {

@@ -26,6 +26,9 @@ void gameObject::setSprite() {
     case BUBBLE:
         label->setPixmap(*((etsGame*)this->parent())->bubbleImage);
         break;
+    case SHARK:
+        label->setPixmap(*((etsGame*)this->parent())->sharkImage);
+        break;
     default:
         break;
     }
