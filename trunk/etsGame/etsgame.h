@@ -67,6 +67,7 @@ private slots:
     void on_actionSave_triggered();
     void on_actionLoad_triggered();
     void on_actionExit_triggered();
+    void focusOutEvent(QFocusEvent *);
     void keyPressEvent(QKeyEvent*);
     void keyReleaseEvent(QKeyEvent *);
     void tick(); // This is called every "tick" of the game.
